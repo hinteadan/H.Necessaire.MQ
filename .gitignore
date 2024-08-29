@@ -396,3 +396,11 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+**/*.cfg.txt
+**/*.cfg.json
+**/appsettings.Local.json
+**/version.txt
+**/ironmen*.json
+appsettings.Local.*.json
+.idea

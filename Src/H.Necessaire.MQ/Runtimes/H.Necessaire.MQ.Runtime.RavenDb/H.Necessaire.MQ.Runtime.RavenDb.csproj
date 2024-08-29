@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="H.Necessaire" Version="2.35.6" />
+		<PackageReference Include="H.Necessaire.Runtime" Version="2.35.6" />
+		<PackageReference Include="H.Necessaire.Runtime.RavenDB" Version="2.35.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\H.Necessaire.MQ.Abstractions\H.Necessaire.MQ.Abstractions.csproj" />
+		<ProjectReference Include="..\..\H.Necessaire.MQ.Core\H.Necessaire.MQ.Core.csproj" />
+	</ItemGroup>
+
+</Project>

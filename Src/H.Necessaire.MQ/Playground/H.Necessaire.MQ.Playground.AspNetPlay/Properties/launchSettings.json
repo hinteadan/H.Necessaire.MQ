@@ -1,0 +1,27 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http - local": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5158",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "SqlServerConnectionString": "",
+        "DefaultDatabaseName": "",
+        "H.Necessaire.Security.IronMan.0.User": "dev",
+        "H.Necessaire.Security.IronMan.0.Pass": "dev"
+      }
+    },
+    "http - dev": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5156",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
