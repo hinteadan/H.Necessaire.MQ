@@ -5,11 +5,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire" Version="2.35.6" />
-		<PackageReference Include="H.Necessaire.Dapper" Version="2.35.6" />
-		<PackageReference Include="H.Necessaire.Runtime" Version="2.35.6" />
-		<PackageReference Include="H.Necessaire.Runtime.SqlServer" Version="2.35.6" />
-		<PackageReference Include="H.Necessaire.Serialization" Version="2.35.6" />
+		<PackageReference Include="H.Necessaire" Version="2.35.7" />
+		<PackageReference Include="H.Necessaire.Dapper" Version="2.35.7" />
+		<PackageReference Include="H.Necessaire.Runtime" Version="2.35.7" />
+		<PackageReference Include="H.Necessaire.Runtime.SqlServer" Version="2.35.7" />
+		<PackageReference Include="H.Necessaire.Serialization" Version="2.35.7" />
 	</ItemGroup>
 
 	<ItemGroup>

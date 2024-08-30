@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "H.Necessaire.MQ.Runtime.Goo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{6F8E8F20-462C-4880-BF0C-C239162AE3FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "H.Necessaire.MQ.CLI", "Tools\H.Necessaire.MQ.CLI\H.Necessaire.MQ.CLI.csproj", "{363828FF-B312-4DB0-AB94-0166200643BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "H.Necessaire.MQ.CLI", "Tools\H.Necessaire.MQ.CLI\H.Necessaire.MQ.CLI.csproj", "{363828FF-B312-4DB0-AB94-0166200643BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

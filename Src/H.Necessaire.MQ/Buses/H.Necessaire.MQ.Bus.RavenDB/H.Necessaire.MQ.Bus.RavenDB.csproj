@@ -5,8 +5,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire" Version="2.35.6" />
-		<PackageReference Include="H.Necessaire.RavenDB" Version="2.35.6" />
+		<PackageReference Include="H.Necessaire" Version="2.35.7" />
+		<PackageReference Include="H.Necessaire.RavenDB" Version="2.35.7" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
 	</ItemGroup>
 
