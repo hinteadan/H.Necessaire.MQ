@@ -7,7 +7,7 @@ H's Necessaire Message Queue / Service Bus / Pub Sub solution
 
 > The minimal, default usage, described below register the MQ with the most basic bus and storage runtime:
 >   - **InMemory** storage and bus
->   - New messages notfication via storage **polling**
+>   - New messages notification via storage **polling**
 >   - Obviously work **only In-Process**
 >   - Therefore only usable for dev/play/debug/test scenarios
 
@@ -82,13 +82,13 @@ H's Necessaire Message Queue / Service Bus / Pub Sub solution
             ```
 
     1. Notes
-        - **MQ Actors** and **MQ ReActors** are **reused**, their instaces are kept in an **internal registry**.
+        - **MQ Actors** and **MQ ReActors** are **reused**, their instances are kept in an **internal registry**.
         - That means that **MQ ReActors** _(message **listeners**)_ can safely be defined **anywhere**:
-            - either in some random dependecy class
+            - either in some random dependency class
             - or in a startup class
-            - or in a dedicated class that handles ReActors initialzation
+            - or in a dedicated class that handles ReActors initialization
             - or anywhere else you prefer.
-        - Obviusly, same goes for **MQ Actors** _(message **senders**)_
+        - Obviously, same goes for **MQ Actors** _(message **senders**)_
         - **ALWAYS** construct/inject actors and reactors via these dedicated methods:
             - dependencyProvider.**GetHmqActor**
             - dependencyProvider.**GetHmqReActor**
@@ -99,7 +99,7 @@ H's Necessaire Message Queue / Service Bus / Pub Sub solution
 ## "Real-World" usage: message buses and storage runtimes
 
 
-For **actual usage** we need to use some **persistent storage** and **dedicated, external message brokers**, InMemory bviously doesn't cut it
+For **actual usage** we need to use some **persistent storage** and **dedicated, external message brokers**, InMemory obviously doesn't cut it
 
 **Storage Runtimes** keep a log of all the messages and their statuses.
 
@@ -120,7 +120,7 @@ The Actor and ReActor usage doesn't change at all, so zero change in the busines
 
 1. **Reference** desired **NuGets**
 
-    1. Avalable **Storage Runtimes**:
+    1. Available **Storage Runtimes**:
 
         - H.Necessaire.MQ.Runtime.**Azure.CosmosDb**
         - H.Necessaire.MQ.Runtime.**FileSystem**
@@ -217,7 +217,7 @@ The Actor and ReActor usage doesn't change at all, so zero change in the busines
     1. Implement and register:
         1. `ImAnHmqEventRiser`
         1. `ImAnHmqExternalEventListener`
-            1. NOT by overriding the interface registrtion, but: `.Register<AzureServiceBusHmqExternalEventListener>(() => new AzureServiceBusHmqExternalEventListener())`
+            1. NOT by overriding the interface registration, but: `.Register<AzureServiceBusHmqExternalEventListener>(() => new AzureServiceBusHmqExternalEventListener())`
             1. Publish the start bus extension:
                 - `public static T StartHmqAzureServiceBusExternalListener<T>(this T dependencyProvider) where T : ImADependencyProvider
             => dependencyProvider.StartHmqExternalListener("AzureServiceBus");`
