@@ -6,13 +6,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.18.1" />
-		<PackageReference Include="H.Necessaire" Version="2.35.7" />
-		<PackageReference Include="H.Necessaire.Serialization" Version="2.35.7" />
+		<PackageReference Include="H.Necessaire" Version="2.37.3" />
+		<PackageReference Include="H.Necessaire.Serialization" Version="2.37.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\H.Necessaire.MQ.Abstractions\H.Necessaire.MQ.Abstractions.csproj" />
 	  <ProjectReference Include="..\..\H.Necessaire.MQ.Core\H.Necessaire.MQ.Core.csproj" />
+	  <ProjectReference Include="..\QdActions\H.Necessaire.MQ.Bus.QdActions.Commons\H.Necessaire.MQ.Bus.QdActions.Commons.csproj" />
 	</ItemGroup>
 
 </Project>

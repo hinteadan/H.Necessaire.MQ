@@ -15,7 +15,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
         string routingKey = "hmq";
         string exchange = "hmq";
         ConnectionFactory rabbitMqConnectionFactory;
-        IConnection rabbitMqConenction;
+        IConnection rabbitMqConnection;
         IModel rabbitMqChannel;
         EventingBasicConsumer eventConsumer;
         ImAnHmqEventRiser internalEventRiser;
@@ -37,14 +37,20 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
                 Password = config?.Get("Password")?.ToString(),
             };
 
+            string routingKeyFromConfig = config?.Get("RoutingKey")?.ToString();
+            routingKey = !routingKeyFromConfig.IsEmpty() ? routingKeyFromConfig : routingKey;
+
+            string exchangeFromConfig = config?.Get("Exchange")?.ToString();
+            exchange = !exchangeFromConfig.IsEmpty() ? exchangeFromConfig : exchange;
+
             internalEventRiser = dependencyProvider.Build<ImAnHmqEventRiser>("internal");
             logger = dependencyProvider.GetLogger<RabbitMqHmqExternalEventListener>();
         }
 
         public Task<OperationResult> Start()
         {
-            rabbitMqConenction = rabbitMqConnectionFactory.CreateConnection();
-            rabbitMqChannel = rabbitMqConenction.CreateModel();
+            rabbitMqConnection = rabbitMqConnectionFactory.CreateConnection();
+            rabbitMqChannel = rabbitMqConnection.CreateModel();
 
             rabbitMqChannel.ExchangeDeclare(exchange, ExchangeType.Direct);
             QueueDeclareOk queue = rabbitMqChannel.QueueDeclare();
@@ -73,8 +79,9 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
         public Task<OperationResult> Stop()
         {
             eventConsumer.Received -= EventConsumer_Received;
+            eventConsumer = null;
             rabbitMqChannel.Dispose();
-            rabbitMqConenction.Dispose();
+            rabbitMqConnection.Dispose();
             return OperationResult.Win().AsTask();
         }
 
@@ -104,7 +111,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
                 {
                     string body = null;
                     new Action(() => body = Encoding.UTF8.GetString(args.Body.ToArray())).TryOrFailWithGrace();
-                    await logger.LogError($"Error occurred while trying to process received event from RabbitMQ; probably the payload is not an HmqEvent and therefor cannot be parsed.{Environment.NewLine}Body: {body ?? "~~N/A~~"}{Environment.NewLine}Message: {ex.Message}", ex, args.ToJsonObject(isPrettyPrinted: true));
+                    await logger.LogError($"Error occurred while trying to process received event from RabbitMQ; probably the payload is not an HmqEvent and therefor cannot be parsed.{Environment.NewLine}Body: {body ?? "~~N/A~~"}{Environment.NewLine}Message: {ex.Message}", ex, args.ToJsonObject(isPrettyPrinted: true) as object);
                 });
         }
     }

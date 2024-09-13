@@ -17,6 +17,21 @@ namespace H.Necessaire.MQ.CLI
                 {
                     Values = [
                         "NuSpecRootFolderPath".ConfigWith(GetCodebaseFolderPath()),
+                        "QdActions".ConfigWith(
+                            "MaxProcessingAttempts".ConfigWith($"{2}"),
+                            "RabbitMQ".ConfigWith(
+                                "HostName".ConfigWith(ReadConfigFromFile("RabbitMqHost.cfg.txt"))
+                                ,"VirtualHost".ConfigWith(ReadConfigFromFile("RabbitMqVirtualHost.cfg.txt"))
+                                ,"UserName".ConfigWith(ReadConfigFromFile("RabbitMqUser.cfg.txt"))
+                                ,"Password".ConfigWith(ReadConfigFromFile("RabbitMqPass.cfg.txt"))
+                            ),
+                            "Azure".ConfigWith(
+                                "ServiceBus".ConfigWith(
+                                    "ConnectionString".ConfigWith(ReadConfigFromFile("AzureServiceBusConnectionString.cfg.txt"))
+                                    , "QueueName".ConfigWith(ReadConfigFromFile("AzureServiceBusQueueName.cfg.txt"))
+                                )
+                            )
+                        )
                     ],
                 }));
             ;

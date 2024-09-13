@@ -184,6 +184,8 @@ The Actor and ReActor usage doesn't change at all, so zero change in the busines
             - HMQ.RabbitMQ.**VirtualHost**
             - HMQ.RabbitMQ.**UserName**
             - HMQ.RabbitMQ.**Password**
+            - HMQ.RabbitMQ.**RoutingKey** - optional, defaults to `hmq`
+            - HMQ.RabbitMQ.**Exchange** - optional, defaults to `hmq`
 
 
         1. H.Necessaire.MQ.Bus.**RavenDB** (same as H.Necessaire)
@@ -230,3 +232,31 @@ The Actor and ReActor usage doesn't change at all, so zero change in the busines
         }
         ```
         1. Register it in the App Wireup
+
+
+----
+
+
+## QD Actions
+
+Some buses include improved implementations for H.Necessaire QD Actions, described below.
+
+
+### H.Necessaire.MQ.Bus.**RabbitOrLavinMQ**
+
+ - Configs
+    - QdActions.**MaxProcessingAttempts** - optional, defaults to `3`
+    - QdActions.RabbitMQ.**HostName**
+    - QdActions.RabbitMQ.**VirtualHost**
+    - QdActions.RabbitMQ.**UserName**
+    - QdActions.RabbitMQ.**Password**
+    - QdActions.RabbitMQ.**QueueName** - optional, defaults to `h-qd-action-queue`
+    - QdActions.RabbitMQ.**RoutingKey** - optional, defaults to `h-qd-action-queue`
+
+
+### H.Necessaire.MQ.Bus.**AzureServiceBus**
+
+ - Configs
+    - QdActions.**MaxProcessingAttempts** - optional, defaults to `3`
+    - QdActions.Azure.ServiceBus.**ConnectionString**
+    - QdActions.Azure.ServiceBus.**QueueName**

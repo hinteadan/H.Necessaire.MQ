@@ -6,13 +6,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire.CLI" Version="2.35.7" />
+		<PackageReference Include="H.Necessaire.CLI" Version="2.37.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="**/*.cfg.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Buses\H.Necessaire.MQ.Bus.AzureServiceBus\H.Necessaire.MQ.Bus.AzureServiceBus.csproj" />
+	  <ProjectReference Include="..\..\Buses\H.Necessaire.MQ.Bus.RabbitOrLavinMQ\H.Necessaire.MQ.Bus.RabbitOrLavinMQ.csproj" />
 	</ItemGroup>
 
 </Project>

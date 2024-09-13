@@ -121,7 +121,7 @@ namespace H.Necessaire.MQ.Bus.NamedPipe.Concrete
                 })
                 .TryOrFailWithGrace(onFail: async ex =>
                 {
-                    await logger.LogError($"Error occurred while trying to process received event from RabbitMQ; probably the payload is not an HmqEvent and therefor cannot be parsed.{Environment.NewLine}Body: {message ?? "~~N/A~~"}{Environment.NewLine}Message: {ex.Message}", ex, message);
+                    await logger.LogError($"Error occurred while trying to process received event from RabbitMQ; probably the payload is not an HmqEvent and therefor cannot be parsed.{Environment.NewLine}Body: {message ?? "~~N/A~~"}{Environment.NewLine}Message: {ex.Message}", ex, message as object);
                 });
         }
     }

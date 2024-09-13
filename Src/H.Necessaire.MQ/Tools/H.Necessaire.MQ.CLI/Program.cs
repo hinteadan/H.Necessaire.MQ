@@ -10,7 +10,7 @@ namespace H.Necessaire.MQ.CLI
             new CliApp()
                 .WithEverything()
                 .WithDefaultRuntimeConfig()
-                //.With(x => x.Register<NewRelicLoggingDependencyGroup>(() => new NewRelicLoggingDependencyGroup()))
+                .With(x => x.Register<DependencyGroup>(() => new DependencyGroup()))
                 .Run(askForCommandIfEmpty: true)
                 .GetAwaiter()
                 .GetResult()
