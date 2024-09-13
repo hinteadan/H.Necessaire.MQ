@@ -7,8 +7,6 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
 {
     internal abstract class MessageBrokerNotifiedQdActionProcessingDaemonBase : ImADaemon, ImAQdActionQueueOnDemandRunner, ImADependency
     {
-        static readonly Lazy<string[]> lazyEnvironmentInfo = new Lazy<string[]>(GetEnvironmentInfo);
-        static string[] environmentInfo => lazyEnvironmentInfo.Value;
         ImALogger logger;
         ImAQdActionProcessor[] allKnownProcessors;
         ImAStorageService<Guid, QdActionResult> qdActionResultStorage;
@@ -143,13 +141,8 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
                 qdActionResult
                 ?.And(x =>
                 {
-                    x.Comments = x.Comments.Push(environmentInfo, checkDistinct: false);
+                    x.Comments = x.Comments.Push(Note.GetEnvironmentInfo().AppendProcessInfo().Select(p => p.ToString()).ToArray(), checkDistinct: false);
                 });
-        }
-
-        private static string[] GetEnvironmentInfo()
-        {
-            return Note.GetEnvironmentInfo().AppendProcessInfo().Select(x => x.ToString()).ToArray();
         }
     }
 }
