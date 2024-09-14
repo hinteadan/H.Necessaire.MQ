@@ -7,8 +7,6 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
     {
         public override ImAnApiWireup WithEverything()
         {
-
-
             return
                 base
                 .WithEverything()

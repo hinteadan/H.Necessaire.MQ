@@ -1,5 +1,6 @@
 using H.Necessaire.MQ.Playground.AspNetPlay.UseCases;
 using H.Necessaire.Runtime.Integration.NetCore;
+using H.Necessaire.Runtime.Integration.NetCore.Concrete;
 using H.Necessaire.Runtime.Integration.NetCore.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -12,12 +13,14 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
 {
     public class Program
     {
-        public static readonly App App = new App(new AppWireup().WithEverything());
+        public static App App;
 
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             OverwriteRuntimConfigFromEnvironmentVariables(builder.Configuration);
+
+            App = App ?? new App(new AppWireup().With(x => x.Register<ImAConfigProvider>(() => new NetCoreConfigProvider(builder.Configuration))).WithEverything());
 
             builder.Services.AddHNecessaireDependenciesToNetCore(App.Wireup.DependencyRegistry);
             builder.Services.AddNetCoreDependenciesToHNecessaire(App.Wireup.DependencyRegistry);
