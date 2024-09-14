@@ -42,12 +42,12 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
             configurationManager["SqlConnections:DefaultConnectionString"] = Environment.GetEnvironmentVariable("SqlServerConnectionString");
             configurationManager["SqlConnections:DatabaseNames:Core"] = Environment.GetEnvironmentVariable("DefaultDatabaseName");
 
-            configurationManager["QdActions:MaxProcessingAttempts"] = Environment.GetEnvironmentVariable("QdActions.MaxProcessingAttempts");
+            configurationManager["QdActions:MaxProcessingAttempts"] = Environment.GetEnvironmentVariable("QdActions_MaxProcessingAttempts");
 
-            configurationManager["QdActions:RabbitMQ:HostName"] = Environment.GetEnvironmentVariable("QdActions.RabbitMQ.HostName");
-            configurationManager["QdActions:RabbitMQ:VirtualHost"] = Environment.GetEnvironmentVariable("QdActions.RabbitMQ.VirtualHost");
-            configurationManager["QdActions:RabbitMQ:UserName"] = Environment.GetEnvironmentVariable("QdActions.RabbitMQ.UserName");
-            configurationManager["QdActions:RabbitMQ:Password"] = Environment.GetEnvironmentVariable("QdActions.RabbitMQ.Password");
+            configurationManager["QdActions:RabbitMQ:HostName"] = Environment.GetEnvironmentVariable("QdActions_RabbitMQ_HostName");
+            configurationManager["QdActions:RabbitMQ:VirtualHost"] = Environment.GetEnvironmentVariable("QdActions_RabbitMQ_VirtualHost");
+            configurationManager["QdActions:RabbitMQ:UserName"] = Environment.GetEnvironmentVariable("QdActions_RabbitMQ_UserName");
+            configurationManager["QdActions:RabbitMQ:Password"] = Environment.GetEnvironmentVariable("QdActions_RabbitMQ_Password");
         }
     }
 }
