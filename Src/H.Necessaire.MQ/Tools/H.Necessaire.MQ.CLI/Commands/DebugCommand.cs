@@ -28,10 +28,10 @@ namespace H.Necessaire.MQ.CLI.Commands
             {
                 await Task.WhenAll([
                     actionQer.Queue(QdAction.New("DevTest", "test1")),
-                    actionQer.Queue(QdAction.New("DevTestX", "test2")),
-                    actionQer.Queue(QdAction.New("DevTestX", "test3")),
-                    actionQer.Queue(QdAction.New("DevTestX", "test4")),
-                    actionQer.Queue(QdAction.New("DevTestX", "test5")),
+                    //actionQer.Queue(QdAction.New("DevTestX", "test2")),
+                    //actionQer.Queue(QdAction.New("DevTestX", "test3")),
+                    //actionQer.Queue(QdAction.New("DevTestX", "test4")),
+                    //actionQer.Queue(QdAction.New("DevTestX", "test5")),
                 ]);
             }
 
