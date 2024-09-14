@@ -1,4 +1,5 @@
-﻿using H.Necessaire.Serialization;
+﻿using H.Necessaire.MQ.Bus.QdActions.Commons;
+using H.Necessaire.Serialization;
 using RabbitMQ.Client;
 using System;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 {
-    internal class RabbitMqActionQer : ImAnActionQer, ImADependency
+    internal class RabbitMqActionQer : MessageBrokerActionQerBase, ImADependency
     {
         string queueName = "h-qd-action-queue";
         string routingKey = "h-qd-action-queue";
@@ -15,8 +16,10 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
         IModel rabbitMqChannel;
         ImALogger logger;
 
-        public void ReferDependencies(ImADependencyProvider dependencyProvider)
+        public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
+            base.ReferDependencies(dependencyProvider);
+
             ConfigNode config
                 = dependencyProvider
                 .GetRuntimeConfig()
@@ -41,7 +44,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             logger = dependencyProvider.GetLogger<RabbitMqActionQer>();
         }
 
-        public async Task<OperationResult> Queue(QdAction action)
+        protected override async Task<OperationResult> QueueActionToMessageBroker(QdAction action)
         {
             OperationResult result = OperationResult.Fail("Not yet started");
 
