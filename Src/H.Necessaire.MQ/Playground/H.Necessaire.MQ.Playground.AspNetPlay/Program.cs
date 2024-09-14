@@ -41,6 +41,8 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
         {
             configurationManager["SqlConnections:DefaultConnectionString"] = Environment.GetEnvironmentVariable("SqlServerConnectionString");
             configurationManager["SqlConnections:DatabaseNames:Core"] = Environment.GetEnvironmentVariable("DefaultDatabaseName");
+
+
         }
     }
 }
