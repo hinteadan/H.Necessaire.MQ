@@ -29,10 +29,10 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
 
                 //.WithHmqRabbitMqMessageBus()
 
-                //.StartHmqRabbitMqExternalListener()
-
                 .WithRabbitMqQdActions()
-                .StartRabbitMqQdActionsProcessor()
+
+                //.StartHmqRabbitMqExternalListener()
+                //.StartRabbitMqQdActionsProcessor()
 
                 ;
         }

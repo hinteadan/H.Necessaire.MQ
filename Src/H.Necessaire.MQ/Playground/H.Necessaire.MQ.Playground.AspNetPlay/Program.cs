@@ -1,3 +1,4 @@
+using H.Necessaire.MQ.Bus.RabbitOrLavinMQ;
 using H.Necessaire.MQ.Playground.AspNetPlay.UseCases;
 using H.Necessaire.Runtime.Integration.NetCore;
 using H.Necessaire.Runtime.Integration.NetCore.Concrete;
@@ -13,14 +14,12 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
 {
     public class Program
     {
-        public static App App;
+        public static readonly App App = new App(new AppWireup().WithEverything());
 
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             OverwriteRuntimConfigFromEnvironmentVariables(builder.Configuration);
-
-            App = App ?? new App(new AppWireup().With(x => x.Register<ImAConfigProvider>(() => new NetCoreConfigProvider(builder.Configuration))).WithEverything());
 
             builder.Services.AddHNecessaireDependenciesToNetCore(App.Wireup.DependencyRegistry);
             builder.Services.AddNetCoreDependenciesToHNecessaire(App.Wireup.DependencyRegistry);
@@ -38,6 +37,8 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
             app.MapPost("/enqueue", async ([FromBody] QdAction qdAction) => await app.Services.GetRequiredService<QdActionUseCase>().Enqueue(qdAction));
 
             app.Run();
+
+            App.Wireup.DependencyRegistry.StartRabbitMqQdActionsProcessor();
         }
 
         static void OverwriteRuntimConfigFromEnvironmentVariables(ConfigurationManager configurationManager)
