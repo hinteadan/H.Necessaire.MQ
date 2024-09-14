@@ -19,6 +19,8 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
 
                 .Unregister(qdActionProcessingHostedServiceDaemonType)
 
+                .Register<Runtime.SqlServer.SqlServerRuntimeDependencyGroup>(() => new Runtime.SqlServer.SqlServerRuntimeDependencyGroup())
+
                 .Register<Security.DependencyGroup>(() => new Security.DependencyGroup())
 
                 .Register<Daemons.DependencyGroup>(() => new Daemons.DependencyGroup())
@@ -32,7 +34,7 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
                 .WithRabbitMqQdActions()
 
                 //.StartHmqRabbitMqExternalListener()
-                //.StartRabbitMqQdActionsProcessor()
+                .StartRabbitMqQdActionsProcessor()
 
                 ;
         }

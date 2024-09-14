@@ -11,7 +11,6 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
                 base
                 .WithEverything()
                 .With(x => x.Register<DependencyGroup>(() => new DependencyGroup()))
-                .With(x => x.Register<Runtime.SqlServer.SqlServerRuntimeDependencyGroup>(() => new Runtime.SqlServer.SqlServerRuntimeDependencyGroup()))
                 ;
         }
     }
