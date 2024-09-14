@@ -241,6 +241,15 @@ The Actor and ReActor usage doesn't change at all, so zero change in the busines
 
 Some buses include improved implementations for H.Necessaire QD Actions, described below.
 
+### Wireup
+
+```csharp
+dependencyRegistry
+    .WithRabbitMqQdActions()
+    .StartRabbitMqQdActionsProcessor()
+```
+> Or equivalet _(e.g.: `.WithAzureServiceBusQdActions().StartAzureServiceBusQdActionsProcessor()`)_
+
 
 ### H.Necessaire.MQ.Bus.**RabbitOrLavinMQ**
 

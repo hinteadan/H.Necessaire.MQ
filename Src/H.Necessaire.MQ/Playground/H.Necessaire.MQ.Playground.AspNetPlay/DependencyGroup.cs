@@ -31,6 +31,7 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
 
                 //.StartHmqRabbitMqExternalListener()
 
+                .WithRabbitMqQdActions()
                 .StartRabbitMqQdActionsProcessor()
 
                 ;
