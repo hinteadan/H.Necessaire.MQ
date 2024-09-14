@@ -23,7 +23,7 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
             await
                 new Func<Task>(async () =>
                 {
-                    (await qdActionStorageService.Save(action)).ThrowOnFail();
+                    (await qdActionStorageService.Save(action.And(a => a.Status = QdActionStatus.Queued))).ThrowOnFail();
                 })
                 .TryOrFailWithGrace(
                     onFail: async ex =>
