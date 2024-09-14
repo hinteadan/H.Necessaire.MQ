@@ -8,6 +8,8 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay.Daemons
 {
     public class KeepAliveDaemon : HostedServiceDaemonBase
     {
+        static readonly EphemeralType<HttpClient> ephemeralHttpClient
+            = new EphemeralType<HttpClient> { ValidFor = TimeSpan.FromMinutes(15), ValidFrom = DateTime.MinValue };
 #if DEBUG
         static readonly TimeSpan workCycleInterval = TimeSpan.FromSeconds(5);
 #else
@@ -37,7 +39,7 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay.Daemons
 
                     using (new TimeMeasurement(x => logger.LogDebug($"DONE Running keep-alive HTTP call in {x}").ConfigureAwait(false).GetAwaiter().GetResult()))
                     {
-                        using HttpClient httpClient = BuildNewHttpClient();
+                        HttpClient httpClient = GetHttpClient();
                         using HttpResponseMessage response = await httpClient.GetAsync($"{hostUrl}/ping", cancellationToken ?? CancellationToken.None);
                         await logger.LogDebug($"HTTP Keep-Alive call response: {(int)response.StatusCode} - {response.StatusCode}");
                         string content = await response.Content.ReadAsStringAsync(cancellationToken ?? CancellationToken.None);
@@ -51,14 +53,23 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay.Daemons
                 });
         }
 
-        static HttpClient BuildNewHttpClient()
+        static HttpClient GetHttpClient()
         {
-            return
-                new HttpClient
+            if (ephemeralHttpClient.IsActive() && ephemeralHttpClient.Payload is not null)
+                return ephemeralHttpClient.Payload;
+
+            if (ephemeralHttpClient.IsExpired() && ephemeralHttpClient.Payload is not null)
+                ephemeralHttpClient.Payload.Dispose();
+
+            ephemeralHttpClient.Payload
+                = new HttpClient
                 (
                     handler: BuildNewStandardSocketsHttpHandler(),
                     disposeHandler: true
                 );
+            ephemeralHttpClient.ActiveAsOf(DateTime.UtcNow);
+
+            return ephemeralHttpClient.Payload;
         }
 
         static StandardSocketsHttpHandler BuildNewStandardSocketsHttpHandler()
