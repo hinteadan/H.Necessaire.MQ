@@ -7,7 +7,7 @@ namespace H.Necessaire.MQ.CLI.Commands
     [Alias("dbg")]
     internal class DebugCommand : CommandBase
     {
-        const int numberOfMessagesToPublish = 150;
+        const int numberOfMessagesToPublish = 60;
         ImAnActionQer actionQer;
         ImAStorageBrowserService<QdAction, QdActionFilter> queueBrowser;
         ImAQdActionQueueOnDemandRunner queueOnDemandRunner;
