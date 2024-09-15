@@ -55,7 +55,16 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 
         public override Task Start(CancellationToken? cancellationToken = null)
         {
-            rabbitMqConnection = rabbitMqConnectionFactory.CreateConnection();
+            new Action(() =>
+            {
+                rabbitMqConnection = rabbitMqConnectionFactory.CreateConnection();
+            })
+            .TryOrFailWithGrace(
+                numberOfTimes: 10,
+                onFail: async ex => await logger.LogError($"Error occurred while trying to connect to RabbitMQ. Reason: {ex.Message}", ex),
+                onRetry: async ex => await logger.LogWarn($"Couldn't connect to RabbitMQ, retrying... Reason: {ex.Message}", ex),
+                millisecondsToSleepBetweenRetries: 1000
+            );
 
             rabbitMqConnection.ConnectionShutdown += RabbitMqConnection_ConnectionShutdown;
             rabbitMqConnection.ConnectionBlocked += RabbitMqConnection_ConnectionBlocked;
@@ -63,6 +72,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             rabbitMqConnection.CallbackException += RabbitMqConnection_CallbackException;
 
             rabbitMqChannel = rabbitMqConnection.CreateModel();
+
             QueueDeclareOk queue = rabbitMqChannel.QueueDeclare(
                 queue: queueName,
                 durable: true,
