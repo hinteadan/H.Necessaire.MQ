@@ -1,6 +1,5 @@
 ﻿using H.Necessaire.Runtime.CLI.Commands;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace H.Necessaire.MQ.CLI.Commands
@@ -8,7 +7,7 @@ namespace H.Necessaire.MQ.CLI.Commands
     [Alias("dbg")]
     internal class DebugCommand : CommandBase
     {
-        const int numberOfMessagesToPublish = 1;
+        const int numberOfMessagesToPublish = 50;
         ImAnActionQer actionQer;
         ImAStorageBrowserService<QdAction, QdActionFilter> queueBrowser;
         ImAQdActionQueueOnDemandRunner queueOnDemandRunner;
