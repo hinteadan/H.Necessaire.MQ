@@ -47,7 +47,7 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay.Daemons
                     using (new TimeMeasurement(x => logger.LogDebug($"DONE Running keep-alive HTTP call in {x}").ConfigureAwait(false).GetAwaiter().GetResult()))
                     {
                         HttpClient httpClient = GetHttpClient();
-                        using HttpResponseMessage response = await httpClient.GetAsync($"{hostUrl}/ping", cancellationToken ?? CancellationToken.None);
+                        using HttpResponseMessage response = await httpClient.GetAsync($"{hostUrl}health", cancellationToken ?? CancellationToken.None);
                         await logger.LogDebug($"HTTP Keep-Alive call response: {(int)response.StatusCode} - {response.StatusCode}");
                         string content = await response.Content.ReadAsStringAsync(cancellationToken ?? CancellationToken.None);
                         await logger.LogDebug($"HTTP Keep-Alive call response content: {content}");

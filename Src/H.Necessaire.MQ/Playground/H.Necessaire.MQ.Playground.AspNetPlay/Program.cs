@@ -40,6 +40,7 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay
             app.MapControllers();
 
             app.MapGet("/", () => "Hello World!");
+            app.MapGet("/health", () => $"Alive @ {DateTime.UtcNow.PrintTimeStampAsIdentifier()}");
             app.MapPost("/enqueue", async ([FromBody] QdAction qdAction) => await app.Services.GetRequiredService<QdActionUseCase>().Enqueue(qdAction));
 
             app.Run();
