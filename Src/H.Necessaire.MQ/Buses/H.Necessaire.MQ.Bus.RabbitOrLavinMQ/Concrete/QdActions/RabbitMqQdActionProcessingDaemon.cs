@@ -2,6 +2,7 @@
 using H.Necessaire.Serialization;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
     [Alias("rabbit-mq", "rabbit", "lavin-mq", "lavin")]
     internal class RabbitMqQdActionProcessingDaemon : MessageBrokerNotifiedQdActionProcessingDaemonBase
     {
+        const ushort optimalNumberOfProcessingThreadsPerCpu = 8;
+        ushort prefetchCount = (ushort)(optimalNumberOfProcessingThreadsPerCpu * Environment.ProcessorCount);
         string queueName = "h-qd-action-queue";
         string routingKey = "h-qd-action-queue";
         ConnectionFactory rabbitMqConnectionFactory;
@@ -40,6 +43,12 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 
             string queueNameFromConfig = config?.Get("QueueName")?.ToString();
             queueName = !queueNameFromConfig.IsEmpty() ? queueNameFromConfig : queueName;
+
+            string routingKeyFromConfig = config?.Get("RoutingKey")?.ToString();
+            routingKey = !routingKeyFromConfig.IsEmpty() ? routingKeyFromConfig : routingKey;
+
+            uint? prefetchCountFromConfig = config?.Get("PrefetchCount")?.ToString()?.ParseToUIntOrFallbackTo(null);
+            prefetchCount = (prefetchCountFromConfig == null) ? prefetchCount : (ushort)prefetchCountFromConfig;
         }
 
         public override Task Start(CancellationToken? cancellationToken = null)
@@ -53,7 +62,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
                 autoDelete: false,
                 arguments: null
             );
-            rabbitMqChannel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
+            rabbitMqChannel.BasicQos(prefetchSize: 0, prefetchCount: prefetchCount, global: false);
 
             eventConsumer = new EventingBasicConsumer(rabbitMqChannel);
 

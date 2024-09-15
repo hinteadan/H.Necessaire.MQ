@@ -1,5 +1,4 @@
 ﻿using H.Necessaire.Runtime.CLI.Commands;
-using System;
 using System.Threading.Tasks;
 
 namespace H.Necessaire.MQ.CLI.Commands
@@ -27,11 +26,11 @@ namespace H.Necessaire.MQ.CLI.Commands
             using (new TimeMeasurement(x => Log($"DONE Debugging in  {x}")))
             {
                 await Task.WhenAll([
-                    actionQer.Queue(QdAction.New("DevTest", "Test XXX 1")),
-                    //actionQer.Queue(QdAction.New("DevTestX", "test2")),
-                    //actionQer.Queue(QdAction.New("DevTestX", "test3")),
-                    //actionQer.Queue(QdAction.New("DevTestX", "test4")),
-                    //actionQer.Queue(QdAction.New("DevTestX", "test5")),
+                    actionQer.Queue(QdAction.New("DevTest", "Test 1")),
+                    actionQer.Queue(QdAction.New("DevTest", "Test 2")),
+                    actionQer.Queue(QdAction.New("DevTest", "Test 3")),
+                    actionQer.Queue(QdAction.New("DevTest", "Test 4")),
+                    actionQer.Queue(QdAction.New("DevTest", "Test 5")),
                 ]);
             }
 

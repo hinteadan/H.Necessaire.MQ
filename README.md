@@ -261,6 +261,7 @@ dependencyRegistry
     - QdActions.RabbitMQ.**Password**
     - QdActions.RabbitMQ.**QueueName** - optional, defaults to `h-qd-action-queue`
     - QdActions.RabbitMQ.**RoutingKey** - optional, defaults to `h-qd-action-queue`
+    - QdActions.RabbitMQ.**PrefetchCount** - optional, defaults to `optimalNumberOfProcessingThreadsPerCpu(=8) * Environment.ProcessorCount`
 
 
 ### H.Necessaire.MQ.Bus.**AzureServiceBus**

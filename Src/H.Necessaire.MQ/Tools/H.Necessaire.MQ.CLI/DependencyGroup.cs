@@ -11,8 +11,8 @@ namespace H.Necessaire.MQ.CLI
             dependencyRegistry
                 .WithRabbitMqQdActions()
                 //.WithAzureServiceBusQdActions()
-                //.Register<DebugCommand.DevTestQdActionProcessor>(() => new DebugCommand.DevTestQdActionProcessor())
-                //.StartRabbitMqQdActionsProcessor()
+                .Register<DebugCommand.DevTestQdActionProcessor>(() => new DebugCommand.DevTestQdActionProcessor())
+                .StartRabbitMqQdActionsProcessor()
                 //.StartAzureServiceBusQdActionsProcessor()
                 ;
         }
