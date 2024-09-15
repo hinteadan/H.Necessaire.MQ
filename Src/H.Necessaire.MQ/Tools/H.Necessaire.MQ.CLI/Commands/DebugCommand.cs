@@ -1,4 +1,5 @@
 ﻿using H.Necessaire.Runtime.CLI.Commands;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace H.Necessaire.MQ.CLI.Commands
@@ -6,6 +7,7 @@ namespace H.Necessaire.MQ.CLI.Commands
     [Alias("dbg")]
     internal class DebugCommand : CommandBase
     {
+        const int numberOfMessagesToPublish = 150;
         ImAnActionQer actionQer;
         ImAStorageBrowserService<QdAction, QdActionFilter> queueBrowser;
         ImAQdActionQueueOnDemandRunner queueOnDemandRunner;
@@ -25,16 +27,10 @@ namespace H.Necessaire.MQ.CLI.Commands
             Log($"Debugging");
             using (new TimeMeasurement(x => Log($"DONE Debugging in  {x}")))
             {
-                await Task.WhenAll([
-                    actionQer.Queue(QdAction.New("DevTest", "Test 1")),
-                    actionQer.Queue(QdAction.New("DevTest", "Test 2")),
-                    actionQer.Queue(QdAction.New("DevTest", "Test 3")),
-                    actionQer.Queue(QdAction.New("DevTest", "Test 4")),
-                    actionQer.Queue(QdAction.New("DevTest", "Test 5")),
-                ]);
+                await Task.WhenAll(Enumerable.Range(1, numberOfMessagesToPublish).Select(x => actionQer.Queue(QdAction.New("DevTest", $"Test {x}"))));
             }
 
-            await Task.Delay(3500);
+            await Task.Delay(2500);
 
             return OperationResult.Win();
         }
