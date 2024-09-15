@@ -72,6 +72,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             rabbitMqConnection.CallbackException += RabbitMqConnection_CallbackException;
 
             rabbitMqChannel = rabbitMqConnection.CreateModel();
+            rabbitMqChannel.ModelShutdown += RabbitMqChannel_ModelShutdown;
 
             QueueDeclareOk queue = rabbitMqChannel.QueueDeclare(
                 queue: queueName,
@@ -118,24 +119,40 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             await Start();
         }
 
+        private async void RabbitMqChannel_ModelShutdown(object sender, ShutdownEventArgs e)
+        {
+            await logger.LogError($"Error occurred on the RabbitMQ connection's Model and it was shutdown. Will try to re-establish. Details: {e}", e.Exception);
+            await Stop();
+            await Start();
+        }
+
         public override Task Stop(CancellationToken? cancellationToken = null)
         {
             new Action(() =>
             {
                 eventConsumer.Received -= EventConsumer_Received;
                 eventConsumer = null;
+            })
+            .TryOrFailWithGrace();
 
+            new Action(() =>
+            {
+                rabbitMqChannel.ModelShutdown -= RabbitMqChannel_ModelShutdown;
                 rabbitMqChannel.Dispose();
                 rabbitMqChannel = null;
+            })
+            .TryOrFailWithGrace();
 
+            new Action(() =>
+            {
                 rabbitMqConnection.ConnectionShutdown -= RabbitMqConnection_ConnectionShutdown;
                 rabbitMqConnection.ConnectionBlocked -= RabbitMqConnection_ConnectionBlocked;
                 rabbitMqConnection.ConnectionUnblocked -= RabbitMqConnection_ConnectionUnblocked;
                 rabbitMqConnection.CallbackException -= RabbitMqConnection_CallbackException;
                 rabbitMqConnection.Dispose();
                 rabbitMqConnection = null;
-
-            }).TryOrFailWithGrace();
+            })
+            .TryOrFailWithGrace();
             
             return true.AsTask();
         }
