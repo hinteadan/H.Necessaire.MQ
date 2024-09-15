@@ -24,7 +24,7 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay.Daemons
         {
             base.ReferDependencies(dependencyProvider);
             logger = dependencyProvider.GetLogger<KeepAliveDaemon>();
-            hostUrl = dependencyProvider.GetRuntimeConfig()?.Get("Hosting")?.Get("BaseUrl")?.ToString();
+            hostUrl = dependencyProvider.GetRuntimeConfig()?.Get("ASPNETCORE_URLS")?.ToString();
         }
 
         protected override async Task DoWork(CancellationToken? cancellationToken = null)
