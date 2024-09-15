@@ -13,8 +13,6 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
     [Alias("rabbit-mq", "rabbit", "lavin-mq", "lavin")]
     internal class RabbitMqQdActionProcessingDaemon : MessageBrokerNotifiedQdActionProcessingDaemonBase
     {
-        const ushort optimalNumberOfProcessingThreadsPerCpu = 8;
-        ushort prefetchCount = (ushort)(optimalNumberOfProcessingThreadsPerCpu * Environment.ProcessorCount);
         string queueName = "h-qd-action-queue";
         string routingKey = "h-qd-action-queue";
         ConnectionFactory rabbitMqConnectionFactory;
@@ -48,7 +46,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             routingKey = !routingKeyFromConfig.IsEmpty() ? routingKeyFromConfig : routingKey;
 
             uint? prefetchCountFromConfig = config?.Get("PrefetchCount")?.ToString()?.ParseToUIntOrFallbackTo(null);
-            prefetchCount = (prefetchCountFromConfig == null) ? prefetchCount : (ushort)prefetchCountFromConfig;
+            maxConcurrentMessageHandling = (prefetchCountFromConfig == null) ? maxConcurrentMessageHandling : (ushort)prefetchCountFromConfig.Value;
         }
 
         public override Task Start(CancellationToken? cancellationToken = null)
@@ -62,7 +60,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
                 autoDelete: false,
                 arguments: null
             );
-            rabbitMqChannel.BasicQos(prefetchSize: 0, prefetchCount: prefetchCount, global: false);
+            rabbitMqChannel.BasicQos(prefetchSize: 0, prefetchCount: maxConcurrentMessageHandling, global: false);
 
             eventConsumer = new EventingBasicConsumer(rabbitMqChannel);
 

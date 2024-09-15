@@ -270,3 +270,4 @@ dependencyRegistry
     - QdActions.**MaxProcessingAttempts** - optional, defaults to `3`
     - QdActions.Azure.ServiceBus.**ConnectionString**
     - QdActions.Azure.ServiceBus.**QueueName**
+    - QdActions.Azure.ServiceBus.**MaxConcurrentCalls** - optional, defaults to `optimalNumberOfProcessingThreadsPerCpu(=8) * Environment.ProcessorCount`

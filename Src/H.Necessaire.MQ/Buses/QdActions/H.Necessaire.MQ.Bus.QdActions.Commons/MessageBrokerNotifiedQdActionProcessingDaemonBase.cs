@@ -7,6 +7,8 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
 {
     internal abstract class MessageBrokerNotifiedQdActionProcessingDaemonBase : ImADaemon, ImAQdActionQueueOnDemandRunner, ImADependency
     {
+        protected const ushort optimalNumberOfProcessingThreadsPerCpu = 8;
+        protected ushort maxConcurrentMessageHandling = (ushort)(optimalNumberOfProcessingThreadsPerCpu * Environment.ProcessorCount);
         ImALogger logger;
         ImAQdActionProcessor[] allKnownProcessors;
         ImAStorageService<Guid, QdActionResult> qdActionResultStorage;

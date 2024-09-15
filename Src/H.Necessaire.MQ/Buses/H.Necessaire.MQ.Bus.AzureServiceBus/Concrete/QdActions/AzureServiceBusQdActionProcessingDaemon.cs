@@ -37,6 +37,9 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
 
             string connectionStringFromConfig = config?.Get("ConnectionString")?.ToString();
             connectionString = !connectionStringFromConfig.IsEmpty() ? connectionStringFromConfig : connectionString;
+
+            uint? maxConcurrentCallsFromConfig = config?.Get("MaxConcurrentCalls")?.ToString()?.ParseToUIntOrFallbackTo(null);
+            maxConcurrentMessageHandling = (maxConcurrentCallsFromConfig == null) ? maxConcurrentMessageHandling : (ushort)maxConcurrentCallsFromConfig.Value;
         }
 
         public override async Task Start(CancellationToken? cancellationToken = null)
@@ -55,7 +58,7 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
             }
 
             serviceBusClient = new ServiceBusClient(connectionString);
-            serviceBusProcessor = serviceBusClient.CreateProcessor(queueName);
+            serviceBusProcessor = serviceBusClient.CreateProcessor(queueName, new ServiceBusProcessorOptions { AutoCompleteMessages = false, MaxConcurrentCalls = maxConcurrentMessageHandling });
             serviceBusProcessor.ProcessMessageAsync += ServiceBusProcessor_ProcessMessageAsync;
             serviceBusProcessor.ProcessErrorAsync += ServiceBusProcessor_ProcessErrorAsync;
 
