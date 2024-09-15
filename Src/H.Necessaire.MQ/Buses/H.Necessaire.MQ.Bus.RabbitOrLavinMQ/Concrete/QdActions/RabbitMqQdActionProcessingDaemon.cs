@@ -3,6 +3,7 @@ using H.Necessaire.Serialization;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,10 +20,13 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
         IConnection rabbitMqConnection;
         IModel rabbitMqChannel;
         EventingBasicConsumer eventConsumer;
+        ImALogger logger;
 
         public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
             base.ReferDependencies(dependencyProvider);
+
+            logger = dependencyProvider.GetLogger<RabbitMqQdActionProcessingDaemon>();
 
             ConfigNode config
                 = dependencyProvider
@@ -52,6 +56,12 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
         public override Task Start(CancellationToken? cancellationToken = null)
         {
             rabbitMqConnection = rabbitMqConnectionFactory.CreateConnection();
+
+            rabbitMqConnection.ConnectionShutdown += RabbitMqConnection_ConnectionShutdown;
+            rabbitMqConnection.ConnectionBlocked += RabbitMqConnection_ConnectionBlocked;
+            rabbitMqConnection.ConnectionUnblocked += RabbitMqConnection_ConnectionUnblocked;
+            rabbitMqConnection.CallbackException += RabbitMqConnection_CallbackException;
+
             rabbitMqChannel = rabbitMqConnection.CreateModel();
             QueueDeclareOk queue = rabbitMqChannel.QueueDeclare(
                 queue: queueName,
@@ -76,12 +86,47 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             return true.AsTask();
         }
 
+        private async void RabbitMqConnection_CallbackException(object sender, CallbackExceptionEventArgs e)
+        {
+            await logger.LogError($"Error occurred on the RabbitMQ Connection callback. Details: {e.Exception?.Message}", e.Exception, payload: null, e.Detail?.Select(x => (x.Value?.ToString()).NoteAs(x.Key)).ToArrayNullIfEmpty());
+        }
+
+        private async void RabbitMqConnection_ConnectionUnblocked(object sender, EventArgs e)
+        {
+            await logger.LogWarn($"RabbitMQ Connection un-blocked");
+        }
+
+        private async void RabbitMqConnection_ConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
+        {
+            await logger.LogWarn($"RabbitMQ Connection blocked. Reason: {e.Reason}");
+        }
+
+        private async void RabbitMqConnection_ConnectionShutdown(object sender, ShutdownEventArgs e)
+        {
+            await logger.LogError($"Error occurred on the RabbitMQ Connection and it was shutdown. Will try to re-establish. Details: {e}", e.Exception);
+            await Stop();
+            await Start();
+        }
+
         public override Task Stop(CancellationToken? cancellationToken = null)
         {
-            eventConsumer.Received -= EventConsumer_Received;
-            eventConsumer = null;
-            rabbitMqChannel.Dispose();
-            rabbitMqConnection.Dispose();
+            new Action(() =>
+            {
+                eventConsumer.Received -= EventConsumer_Received;
+                eventConsumer = null;
+
+                rabbitMqChannel.Dispose();
+                rabbitMqChannel = null;
+
+                rabbitMqConnection.ConnectionShutdown -= RabbitMqConnection_ConnectionShutdown;
+                rabbitMqConnection.ConnectionBlocked -= RabbitMqConnection_ConnectionBlocked;
+                rabbitMqConnection.ConnectionUnblocked -= RabbitMqConnection_ConnectionUnblocked;
+                rabbitMqConnection.CallbackException -= RabbitMqConnection_CallbackException;
+                rabbitMqConnection.Dispose();
+                rabbitMqConnection = null;
+
+            }).TryOrFailWithGrace();
+            
             return true.AsTask();
         }
 
