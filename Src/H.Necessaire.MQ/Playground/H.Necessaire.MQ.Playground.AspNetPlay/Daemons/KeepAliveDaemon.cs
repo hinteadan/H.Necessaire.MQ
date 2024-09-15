@@ -1,5 +1,6 @@
 ﻿using H.Necessaire.Runtime.Integration.NetCore;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,20 +19,26 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay.Daemons
 
         protected override TimeSpan WorkCycleInterval => workCycleInterval;
 
-        string hostUrl;
+        string[] hostUrls;
         ImALogger logger;
         public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
             base.ReferDependencies(dependencyProvider);
             logger = dependencyProvider.GetLogger<KeepAliveDaemon>();
-            hostUrl = dependencyProvider.GetRuntimeConfig()?.Get("ASPNETCORE_URLS")?.ToString();
+            hostUrls = ParseUrls(dependencyProvider.GetRuntimeConfig()?.Get("ASPNETCORE_URLS")?.ToString());
         }
 
         protected override async Task DoWork(CancellationToken? cancellationToken = null)
         {
-            if (hostUrl.IsEmpty())
+            if (hostUrls?.Any() != true)
                 return;
 
+            await
+                Task.WhenAll(hostUrls.Select(x => PingUrl(x, cancellationToken)));
+        }
+
+        async Task PingUrl(string hostUrl, CancellationToken? cancellationToken = null)
+        {
             await
                 new Func<Task>(async () =>
                 {
@@ -89,6 +96,27 @@ namespace H.Necessaire.MQ.Playground.AspNetPlay.Daemons
                     //    Set a timeout to reflect the DNS or other network changes
                     PooledConnectionLifetime = TimeSpan.FromHours(.5),
                 };
+        }
+
+        static string[] ParseUrls(string urlsAsString)
+        {
+            if (urlsAsString.IsEmpty())
+                return null;
+
+            string[] parts = urlsAsString.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+            return parts?.Select(ParseUrl)?.ToNoNullsArray();
+        }
+
+        static string ParseUrl(string urlAsString)
+        {
+            if (urlAsString.IsEmpty())
+                return null;
+
+            if(!Uri.TryCreate(urlAsString, UriKind.Absolute, out Uri parsedUri))
+                return null;
+
+            return parsedUri.ToString();
         }
     }
 }
