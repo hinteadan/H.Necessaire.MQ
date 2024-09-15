@@ -8,7 +8,7 @@ namespace H.Necessaire.MQ.CLI.Commands
     [Alias("dbg")]
     internal class DebugCommand : CommandBase
     {
-        const int numberOfMessagesToPublish = 60;
+        const int numberOfMessagesToPublish = 50;
         ImAnActionQer actionQer;
         ImAStorageBrowserService<QdAction, QdActionFilter> queueBrowser;
         ImAQdActionQueueOnDemandRunner queueOnDemandRunner;
@@ -28,7 +28,10 @@ namespace H.Necessaire.MQ.CLI.Commands
             Log($"Debugging");
             using (new TimeMeasurement(x => Log($"DONE Debugging in  {x}")))
             {
-                Enumerable.Range(1, numberOfMessagesToPublish).Select(x => actionQer.Queue(QdAction.New("DevTest", $"Test {x}")));
+                for (int index = 0; index < numberOfMessagesToPublish; index++)
+                {
+                    await actionQer.Queue(QdAction.New("DevTest", $"Test {index + 1}"));
+                }
             }
 
             await Task.Delay(TimeSpan.FromSeconds(2));
