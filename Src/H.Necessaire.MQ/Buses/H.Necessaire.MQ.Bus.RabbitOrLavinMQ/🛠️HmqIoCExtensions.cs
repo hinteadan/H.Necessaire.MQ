@@ -1,4 +1,5 @@
-﻿using H.Necessaire.MQ.Core;
+﻿using H.Necessaire.MQ.Bus.Commons;
+using H.Necessaire.MQ.Core;
 
 namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ
 {
@@ -11,6 +12,10 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ
         }
 
         public static T StartHmqRabbitMqExternalListener<T>(this T dependencyProvider) where T : ImADependencyProvider
-            => dependencyProvider.StartHmqExternalListener("RabbitMQ");
+        {
+            dependencyProvider.StartHmqExternalListener("RabbitMQ");
+            dependencyProvider.Get<ResilienceRecoveryDaemon>().Start();
+            return dependencyProvider;
+        }
     }
 }

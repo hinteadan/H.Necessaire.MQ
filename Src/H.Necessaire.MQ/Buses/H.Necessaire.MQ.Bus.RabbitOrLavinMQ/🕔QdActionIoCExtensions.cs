@@ -1,4 +1,5 @@
-﻿using H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions;
+﻿using H.Necessaire.MQ.Bus.Commons;
+using H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions;
 
 namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ
 {
@@ -20,6 +21,8 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ
                 .GetAwaiter()
                 .GetResult()
                 ;
+
+            dependencyProvider.Get<ResilienceRecoveryDaemon>().Start();
 
             return dependencyProvider;
         }
