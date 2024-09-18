@@ -53,7 +53,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{92B2EACD-A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QdActions", "QdActions", "{D8DA6D7B-020A-4063-B2E8-504A86DF2006}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "H.Necessaire.MQ.Bus.QdActions.Commons", "Buses\QdActions\H.Necessaire.MQ.Bus.QdActions.Commons\H.Necessaire.MQ.Bus.QdActions.Commons.csproj", "{82240BB2-DAD0-43E2-A215-D69C19DF4BAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "H.Necessaire.MQ.Bus.QdActions.Commons", "Buses\QdActions\H.Necessaire.MQ.Bus.QdActions.Commons\H.Necessaire.MQ.Bus.QdActions.Commons.csproj", "{82240BB2-DAD0-43E2-A215-D69C19DF4BAB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{2F13CCDB-4CB8-4E05-8554-AFB8F71CFA01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "H.Necessaire.MQ.Bus.Commons", "Buses\H.Necessaire.MQ.Bus.Commons\H.Necessaire.MQ.Bus.Commons.csproj", "{B2914576-0921-4254-9CC3-D45776B09189}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +129,10 @@ Global
 		{82240BB2-DAD0-43E2-A215-D69C19DF4BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82240BB2-DAD0-43E2-A215-D69C19DF4BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82240BB2-DAD0-43E2-A215-D69C19DF4BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2914576-0921-4254-9CC3-D45776B09189}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2914576-0921-4254-9CC3-D45776B09189}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2914576-0921-4254-9CC3-D45776B09189}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2914576-0921-4254-9CC3-D45776B09189}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,6 +152,8 @@ Global
 		{363828FF-B312-4DB0-AB94-0166200643BE} = {6F8E8F20-462C-4880-BF0C-C239162AE3FA}
 		{D8DA6D7B-020A-4063-B2E8-504A86DF2006} = {782A3B8A-E2BB-49B9-94EE-F3F55E08F6FC}
 		{82240BB2-DAD0-43E2-A215-D69C19DF4BAB} = {D8DA6D7B-020A-4063-B2E8-504A86DF2006}
+		{2F13CCDB-4CB8-4E05-8554-AFB8F71CFA01} = {782A3B8A-E2BB-49B9-94EE-F3F55E08F6FC}
+		{B2914576-0921-4254-9CC3-D45776B09189} = {2F13CCDB-4CB8-4E05-8554-AFB8F71CFA01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {86B5D42A-5240-4126-BE8F-AA6797B0BEDD}
