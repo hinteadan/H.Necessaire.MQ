@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace H.Necessaire.MQ.Bus.Commons
 {
-    internal class ResilienceRecoveryDaemon : ImADaemon, ImADependency
+    [Alias("ResilienceRecovery", "resilience-recovery")]
+    internal class ResilienceRecoveryDaemon : ImAResilienceRecoveryRegistry, ImADaemon, ImADependency
     {
 #if DEBUG
         TimeSpan processingInterval = TimeSpan.FromSeconds(5);
@@ -75,5 +77,15 @@ namespace H.Necessaire.MQ.Bus.Commons
                     }
                 );
         }
+
+        public void RegisterResilienceTask(Func<Task> resilienceTask)
+        {
+            if (resilienceTask is null)
+                return;
+
+            resilienceTasks.Add(resilienceTask);
+        }
+
+        public IEnumerable<Func<Task>> StreamAll() => resilienceTasks.AsEnumerable();
     }
 }
