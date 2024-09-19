@@ -8,5 +8,6 @@ Cache actionQer connection for when sending multiple messages in a short amount 
  - For RabbitMQ
  - For Azure SB
 
+Reuse conenction for sending message if the process has an open connection for listening
 
 Sagas
