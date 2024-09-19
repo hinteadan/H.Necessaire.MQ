@@ -33,7 +33,8 @@ namespace H.Necessaire.MQ.CLI.Commands
                 }
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(2));
+            Console.WriteLine("Press ENTER to exit");
+            Console.ReadLine();
 
             return OperationResult.Win();
         }

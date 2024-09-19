@@ -8,6 +8,8 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
         {
             dependencyRegistry
 
+                .Register<Commons.DependencyGroup>(() => new Commons.DependencyGroup())
+
                 .Register<RabbitMqHmqEventRiser>(() => new RabbitMqHmqEventRiser())
                 .Register<ImAnHmqEventRiser>(() => dependencyRegistry.Get<RabbitMqHmqEventRiser>())
 

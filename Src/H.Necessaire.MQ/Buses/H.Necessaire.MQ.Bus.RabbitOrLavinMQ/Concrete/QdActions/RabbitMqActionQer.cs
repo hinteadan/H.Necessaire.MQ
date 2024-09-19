@@ -32,10 +32,10 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 
             rabbitMqConnectionFactory = new ConnectionFactory
             {
-                HostName = config?.Get("HostName")?.ToString(),
+                HostName = config?.Get("HostName")?.ToString() ?? "",
                 VirtualHost = config?.Get("VirtualHost")?.ToString(),
-                UserName = config?.Get("UserName")?.ToString(),
-                Password = config?.Get("Password")?.ToString(),
+                UserName = config?.Get("UserName")?.ToString() ?? "",
+                Password = config?.Get("Password")?.ToString() ?? "",
             };
 
             string queueNameFromConfig = config?.Get("QueueName")?.ToString();

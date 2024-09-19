@@ -39,10 +39,10 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 
             rabbitMqConnectionFactory = new ConnectionFactory
             {
-                HostName = config?.Get("HostName")?.ToString(),
+                HostName = config?.Get("HostName")?.ToString() ?? "",
                 VirtualHost = config?.Get("VirtualHost")?.ToString(),
-                UserName = config?.Get("UserName")?.ToString(),
-                Password = config?.Get("Password")?.ToString(),
+                UserName = config?.Get("UserName")?.ToString() ?? "",
+                Password = config?.Get("Password")?.ToString() ?? "",
             };
 
             string queueNameFromConfig = config?.Get("QueueName")?.ToString();
@@ -59,14 +59,15 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 
         public override Task Start(CancellationToken? cancellationToken = null)
         {
+            int retryAttempt = 0;
             new Action(() =>
             {
                 rabbitMqConnection = rabbitMqConnectionFactory.CreateConnection();
             })
             .TryOrFailWithGrace(
-                numberOfTimes: 10,
-                onFail: async ex => await logger.LogError($"Error occurred while trying to connect to RabbitMQ. Reason: {ex.Message}", ex),
-                onRetry: async ex => await logger.LogWarn($"Couldn't connect to RabbitMQ, retrying... Reason: {ex.Message}", ex),
+                numberOfTimes: 2,
+                onFail: async ex => await logger.LogError($"Error occurred while trying to connect to RabbitMQ after {retryAttempt} attempt(s). Reason: {ex.Message}", ex),
+                onRetry: async ex => await logger.LogWarn($"Couldn't connect to RabbitMQ, retrying (attempt {++retryAttempt})... Reason: {ex.Message}", ex),
                 millisecondsToSleepBetweenRetries: 1000
             );
 

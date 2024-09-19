@@ -6,6 +6,7 @@
         {
             dependencyRegistry
                 .Register<ResilienceRecoveryDaemon>(() => new ResilienceRecoveryDaemon())
+                .Register<ImAResilienceRecoveryRegistry>(() => dependencyRegistry.Get<ResilienceRecoveryDaemon>())
                 ;
         }
     }
