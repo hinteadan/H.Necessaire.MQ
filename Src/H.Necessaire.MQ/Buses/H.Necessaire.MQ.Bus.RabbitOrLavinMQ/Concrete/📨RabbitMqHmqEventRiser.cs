@@ -27,6 +27,12 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
                 UserName = config?.Get("UserName")?.ToString(),
                 Password = config?.Get("Password")?.ToString(),
             };
+
+            string routingKeyFromConfig = config?.Get("RoutingKey")?.ToString();
+            routingKey = !routingKeyFromConfig.IsEmpty() ? routingKeyFromConfig : routingKey;
+
+            string exchangeFromConfig = config?.Get("Exchange")?.ToString();
+            exchange = !exchangeFromConfig.IsEmpty() ? exchangeFromConfig : exchange;
         }
 
         public Task<OperationResult<ImAnHmqReActor>[]> Raise(HmqEvent hmqEvent)
