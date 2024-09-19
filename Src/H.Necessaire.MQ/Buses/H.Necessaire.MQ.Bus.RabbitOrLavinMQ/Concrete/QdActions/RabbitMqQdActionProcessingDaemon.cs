@@ -1,4 +1,5 @@
-﻿using H.Necessaire.MQ.Bus.QdActions.Commons;
+﻿using H.Necessaire.MQ.Bus.Commons;
+using H.Necessaire.MQ.Bus.QdActions.Commons;
 using H.Necessaire.Serialization;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -21,6 +22,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
         IModel rabbitMqChannel;
         EventingBasicConsumer eventConsumer;
         ImALogger logger;
+        ImAResilienceRecoveryRegistry resilienceRecoveryRegistry;
 
         public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
@@ -51,6 +53,8 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 
             uint? prefetchCountFromConfig = config?.Get("PrefetchCount")?.ToString()?.ParseToUIntOrFallbackTo(null);
             maxConcurrentMessageHandling = (prefetchCountFromConfig == null) ? maxConcurrentMessageHandling : (ushort)prefetchCountFromConfig.Value;
+
+            resilienceRecoveryRegistry = dependencyProvider.Get<ImAResilienceRecoveryRegistry>();
         }
 
         public override Task Start(CancellationToken? cancellationToken = null)
@@ -65,6 +69,11 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
                 onRetry: async ex => await logger.LogWarn($"Couldn't connect to RabbitMQ, retrying... Reason: {ex.Message}", ex),
                 millisecondsToSleepBetweenRetries: 1000
             );
+
+            resilienceRecoveryRegistry.RegisterResilienceTask(RunResiliencyChecks);
+
+            if (rabbitMqConnection is null)
+                return false.AsTask();
 
             rabbitMqConnection.ConnectionShutdown += RabbitMqConnection_ConnectionShutdown;
             rabbitMqConnection.ConnectionBlocked += RabbitMqConnection_ConnectionBlocked;
@@ -93,6 +102,42 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
                     autoAck: false,
                     consumer: eventConsumer
                 );
+
+            return true.AsTask();
+        }
+
+        public override Task Stop(CancellationToken? cancellationToken = null)
+        {
+            resilienceRecoveryRegistry.UnregisterResilienceTask(RunResiliencyChecks);
+
+            if (rabbitMqConnection is null)
+                return false.AsTask();
+
+            new Action(() =>
+            {
+                eventConsumer.Received -= EventConsumer_Received;
+                eventConsumer = null;
+            })
+            .TryOrFailWithGrace();
+
+            new Action(() =>
+            {
+                rabbitMqChannel.ModelShutdown -= RabbitMqChannel_ModelShutdown;
+                rabbitMqChannel.Dispose();
+                rabbitMqChannel = null;
+            })
+            .TryOrFailWithGrace();
+
+            new Action(() =>
+            {
+                rabbitMqConnection.ConnectionShutdown -= RabbitMqConnection_ConnectionShutdown;
+                rabbitMqConnection.ConnectionBlocked -= RabbitMqConnection_ConnectionBlocked;
+                rabbitMqConnection.ConnectionUnblocked -= RabbitMqConnection_ConnectionUnblocked;
+                rabbitMqConnection.CallbackException -= RabbitMqConnection_CallbackException;
+                rabbitMqConnection.Dispose();
+                rabbitMqConnection = null;
+            })
+            .TryOrFailWithGrace();
 
             return true.AsTask();
         }
@@ -126,37 +171,6 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             await Start();
         }
 
-        public override Task Stop(CancellationToken? cancellationToken = null)
-        {
-            new Action(() =>
-            {
-                eventConsumer.Received -= EventConsumer_Received;
-                eventConsumer = null;
-            })
-            .TryOrFailWithGrace();
-
-            new Action(() =>
-            {
-                rabbitMqChannel.ModelShutdown -= RabbitMqChannel_ModelShutdown;
-                rabbitMqChannel.Dispose();
-                rabbitMqChannel = null;
-            })
-            .TryOrFailWithGrace();
-
-            new Action(() =>
-            {
-                rabbitMqConnection.ConnectionShutdown -= RabbitMqConnection_ConnectionShutdown;
-                rabbitMqConnection.ConnectionBlocked -= RabbitMqConnection_ConnectionBlocked;
-                rabbitMqConnection.ConnectionUnblocked -= RabbitMqConnection_ConnectionUnblocked;
-                rabbitMqConnection.CallbackException -= RabbitMqConnection_CallbackException;
-                rabbitMqConnection.Dispose();
-                rabbitMqConnection = null;
-            })
-            .TryOrFailWithGrace();
-            
-            return true.AsTask();
-        }
-
         private async void EventConsumer_Received(object sender, BasicDeliverEventArgs args)
         {
             byte[] body = args.Body.ToArray();
@@ -170,6 +184,21 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
                 failMarker: () => { rabbitMqChannel.BasicNack(deliveryTag: args.DeliveryTag, multiple: false, requeue: false); return true.AsTask(); },
                 winMarker: () => { rabbitMqChannel.BasicAck(deliveryTag: args.DeliveryTag, multiple: false); return true.AsTask(); }
             );
+        }
+
+        private async Task RunResiliencyChecks()
+        {
+            await logger.LogTrace($"Running RabbitMQ Resiliency Checks");
+            TimeSpan duration = TimeSpan.Zero;
+            using (new TimeMeasurement(x => duration = x))
+            {
+                if (rabbitMqConnection != null)
+                    return;
+
+                await Stop();
+                await Start();
+            }
+            await logger.LogTrace($"DONE Running RabbitMQ Resiliency Checks in {duration}");
         }
     }
 }

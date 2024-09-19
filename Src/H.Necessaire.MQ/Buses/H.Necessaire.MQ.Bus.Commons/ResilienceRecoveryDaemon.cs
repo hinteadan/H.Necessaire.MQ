@@ -17,7 +17,7 @@ namespace H.Necessaire.MQ.Bus.Commons
 #endif
         ImAPeriodicAction resilienceTasksExecutionPeriodicAction;
         ImALogger logger;
-        readonly ConcurrentBag<Func<Task>> resilienceTasks = new ConcurrentBag<Func<Task>>();
+        readonly ConcurrentDictionary<string, Func<Task>> resilienceTasks = new ConcurrentDictionary<string, Func<Task>>();
 
         public void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
@@ -50,7 +50,7 @@ namespace H.Necessaire.MQ.Bus.Commons
             {
                 await
                     Task.WhenAll(
-                        resilienceTasks.Select(RunTask)
+                        resilienceTasks.Values.Select(RunTask)
                     );
             }
             await logger.LogTrace($"DONE Running ALL {resilienceTasksCount} resilience recovery tasks in {duration}");
@@ -83,9 +83,22 @@ namespace H.Necessaire.MQ.Bus.Commons
             if (resilienceTask is null)
                 return;
 
-            resilienceTasks.Add(resilienceTask);
+            resilienceTasks.TryAdd(BuildID(resilienceTask), resilienceTask);
         }
 
-        public IEnumerable<Func<Task>> StreamAll() => resilienceTasks.AsEnumerable();
+        public void UnregisterResilienceTask(Func<Task> resilienceTask)
+        {
+            if (resilienceTask is null)
+                return;
+
+            resilienceTasks.TryRemove(BuildID(resilienceTask), out Func<Task> removedResilienceTask);
+        }
+
+        public IEnumerable<Func<Task>> StreamAll() => resilienceTasks.Values.AsEnumerable();
+
+        static string BuildID(Func<Task> resilienceTask)
+        {
+            return $"{resilienceTask.Method.DeclaringType.FullName}.{resilienceTask.Method.Name}";
+        }
     }
 }
