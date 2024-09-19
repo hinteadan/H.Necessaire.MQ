@@ -1,10 +1,12 @@
 ﻿using H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions;
+using RabbitMQ.Client;
 
 namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
 {
     internal class RabbitMqCommunicationManager : ImADependency
     {
         ImALogger logger;
+        RabbitMqConfiguration rabbitMqConfiguration;
         public void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
             logger = dependencyProvider.GetLogger<RabbitMqCommunicationManager>();
