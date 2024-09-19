@@ -1,5 +1,5 @@
-﻿using H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
+using System.Threading.Tasks;
 
 namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
 {
@@ -10,6 +10,11 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
         public void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
             logger = dependencyProvider.GetLogger<RabbitMqCommunicationManager>();
+        }
+
+        public Task<OperationResult<IModel>> GetChannel(RabbitMqConfiguration rabbitMqConfiguration)
+        {
+            return OperationResult.Fail("Noy yet implemented").WithoutPayload<IModel>().AsTask();
         }
     }
 
