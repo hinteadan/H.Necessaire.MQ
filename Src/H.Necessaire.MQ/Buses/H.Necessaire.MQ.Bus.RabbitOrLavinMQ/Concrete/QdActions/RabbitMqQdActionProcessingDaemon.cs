@@ -66,7 +66,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             })
             .TryOrFailWithGrace(
                 numberOfTimes: 2,
-                onFail: async ex => await logger.LogError($"Error occurred while trying to connect to RabbitMQ after {retryAttempt} attempt(s). Reason: {ex.Message}", ex),
+                onFail: async ex => await logger.LogError($"Error occurred while trying to connect to RabbitMQ after {retryAttempt + 1} attempt(s). Reason: {ex.Message}", ex),
                 onRetry: async ex => await logger.LogWarn($"Couldn't connect to RabbitMQ, retrying (attempt {++retryAttempt})... Reason: {ex.Message}", ex),
                 millisecondsToSleepBetweenRetries: 1000
             );
