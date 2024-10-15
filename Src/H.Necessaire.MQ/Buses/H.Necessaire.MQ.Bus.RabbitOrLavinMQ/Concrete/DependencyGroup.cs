@@ -8,7 +8,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
         {
             dependencyRegistry
 
-                .Register<RabbitMqCommunicationManager>(() => new RabbitMqCommunicationManager())
+                .Register<Communication.DependencyGroup>(() => new Communication.DependencyGroup())
 
                 .Register<Commons.DependencyGroup>(() => new Commons.DependencyGroup())
 
