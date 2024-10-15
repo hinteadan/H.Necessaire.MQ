@@ -19,6 +19,7 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         ImALogger logger;
         ImAResilienceRecoveryRegistry resilienceRecoveryRegistry;
+        bool isListening = false;
         public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
             base.ReferDependencies(dependencyProvider);
@@ -69,6 +70,8 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
 
                 await StartListening();
 
+                isListening = true;
+
             })
             .TryOrFailWithGrace(
                 numberOfTimes: 2,
@@ -91,6 +94,8 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
         public override async Task Stop(CancellationToken? cancellationToken = null)
         {
             resilienceRecoveryRegistry.UnregisterResilienceTask(RunResiliencyChecks);
+
+            isListening = false;
 
             if (serviceBusClient is null)
                 return;
@@ -148,7 +153,7 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
             TimeSpan duration = TimeSpan.Zero;
             using (new TimeMeasurement(x => duration = x))
             {
-                if (serviceBusClient != null && serviceBusProcessor != null)
+                if (serviceBusClient != null && serviceBusProcessor != null && isListening)
                     return;
 
                 await Stop();
