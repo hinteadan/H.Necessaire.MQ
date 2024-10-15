@@ -122,7 +122,7 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
 
         private async void StartListening()
         {
-            await serviceBusProcessor.StartProcessingAsync();
+            await serviceBusProcessor.StartProcessingAsync(cancellationTokenSource.Token);
         }
 
         private async Task ServiceBusProcessor_ProcessMessageAsync(ProcessMessageEventArgs arg)
