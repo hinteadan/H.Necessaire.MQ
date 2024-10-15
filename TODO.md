@@ -17,5 +17,6 @@ Cache actionQer connection for when sending multiple messages in a short amount 
 	- For HMQ
 
 Reuse conenction for sending message if the process has an open connection for listening
+ - Use 1 connection per node, multiple channels (for HMQ and QD)
 
 Sagas
