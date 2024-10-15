@@ -59,7 +59,7 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
             }
 
             int retryAttempt = 0;
-            new Action(() =>
+            await new Func<Task>(async () =>
             {
 
                 serviceBusClient = new ServiceBusClient(connectionString);
@@ -67,7 +67,7 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
                 serviceBusProcessor.ProcessMessageAsync += ServiceBusProcessor_ProcessMessageAsync;
                 serviceBusProcessor.ProcessErrorAsync += ServiceBusProcessor_ProcessErrorAsync;
 
-                StartListening();
+                await StartListening();
 
             })
             .TryOrFailWithGrace(
@@ -120,9 +120,9 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
             }).TryOrFailWithGrace();
         }
 
-        private async void StartListening()
+        private async Task StartListening()
         {
-            await serviceBusProcessor.StartProcessingAsync(cancellationTokenSource.Token);
+            await serviceBusProcessor.StartProcessingAsync(cancellationTokenSource.Token).ConfigureAwait(continueOnCapturedContext: false);
         }
 
         private async Task ServiceBusProcessor_ProcessMessageAsync(ProcessMessageEventArgs arg)
