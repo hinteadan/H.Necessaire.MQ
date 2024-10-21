@@ -7,7 +7,6 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.Communication
     internal class RabbitMqCommunicationManager : ImADependency
     {
         ImALogger logger;
-        RabbitMqConnectionConfiguration rabbitMqConfiguration;
         public void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
             logger = dependencyProvider.GetLogger<RabbitMqCommunicationManager>();
