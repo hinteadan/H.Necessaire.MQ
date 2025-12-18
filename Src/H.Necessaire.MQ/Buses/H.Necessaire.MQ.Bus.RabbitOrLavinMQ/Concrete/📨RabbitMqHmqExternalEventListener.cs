@@ -16,8 +16,8 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
         string exchange = "hmq";
         ConnectionFactory rabbitMqConnectionFactory;
         IConnection rabbitMqConnection;
-        IModel rabbitMqChannel;
-        EventingBasicConsumer eventConsumer;
+        IChannel rabbitMqChannel;
+        AsyncEventingBasicConsumer eventConsumer;
         ImAnHmqEventRiser internalEventRiser;
         ImALogger logger;
         public void ReferDependencies(ImADependencyProvider dependencyProvider)
@@ -47,38 +47,38 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
             logger = dependencyProvider.GetLogger<RabbitMqHmqExternalEventListener>();
         }
 
-        public Task<OperationResult> Start()
+        public async Task<OperationResult> Start()
         {
-            rabbitMqConnection = rabbitMqConnectionFactory.CreateConnection();
-            rabbitMqChannel = rabbitMqConnection.CreateModel();
+            rabbitMqConnection = await rabbitMqConnectionFactory.CreateConnectionAsync();
+            rabbitMqChannel = await rabbitMqConnection.CreateChannelAsync();
 
-            rabbitMqChannel.ExchangeDeclare(exchange, ExchangeType.Direct);
-            QueueDeclareOk queue = rabbitMqChannel.QueueDeclare();
+            await rabbitMqChannel.ExchangeDeclareAsync(exchange, ExchangeType.Direct);
+            QueueDeclareOk queue = await rabbitMqChannel.QueueDeclareAsync();
 
-            rabbitMqChannel
-                .QueueBind(
+            await rabbitMqChannel
+                .QueueBindAsync(
                     queue: queue.QueueName,
                     exchange: exchange,
                     routingKey: routingKey
                 );
 
-            eventConsumer = new EventingBasicConsumer(rabbitMqChannel);
+            eventConsumer = new AsyncEventingBasicConsumer(rabbitMqChannel);
 
-            eventConsumer.Received += EventConsumer_Received;
+            eventConsumer.ReceivedAsync += EventConsumer_Received;
 
-            rabbitMqChannel
-                .BasicConsume(
+            await rabbitMqChannel
+                .BasicConsumeAsync(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: eventConsumer
                 );
 
-            return OperationResult.Win().AsTask();
+            return OperationResult.Win();
         }
 
         public Task<OperationResult> Stop()
         {
-            eventConsumer.Received -= EventConsumer_Received;
+            eventConsumer.ReceivedAsync -= EventConsumer_Received;
             eventConsumer = null;
             rabbitMqChannel.Dispose();
             rabbitMqConnection.Dispose();
@@ -95,7 +95,7 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
         }
 
 
-        private async void EventConsumer_Received(object sender, BasicDeliverEventArgs args)
+        private async Task EventConsumer_Received(object sender, BasicDeliverEventArgs args)
         {
             await
                 new Func<Task>(async () =>

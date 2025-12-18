@@ -1,5 +1,9 @@
 {
   "profiles": {
+    "CLI - docs debug": {
+      "commandName": "Project",
+      "commandLineArgs": "docs debug"
+    },
     "CLI - debug": {
       "commandName": "Project",
       "commandLineArgs": "debug"

@@ -1,0 +1,40 @@
+<Solution>
+  <Folder Name="/Buses/">
+    <Project Path="Buses/H.Necessaire.MQ.Bus.AzureServiceBus/H.Necessaire.MQ.Bus.AzureServiceBus.csproj" />
+    <Project Path="Buses/H.Necessaire.MQ.Bus.FileSystem/H.Necessaire.MQ.Bus.FileSystem.csproj" />
+    <Project Path="Buses/H.Necessaire.MQ.Bus.NamedPipe/H.Necessaire.MQ.Bus.NamedPipe.csproj" />
+    <Project Path="Buses/H.Necessaire.MQ.Bus.RabbitOrLavinMQ/H.Necessaire.MQ.Bus.RabbitOrLavinMQ.csproj" />
+    <Project Path="Buses/H.Necessaire.MQ.Bus.RavenDB/H.Necessaire.MQ.Bus.RavenDB.csproj" />
+  </Folder>
+  <Folder Name="/Buses/Common/">
+    <Project Path="Buses/H.Necessaire.MQ.Bus.Commons/H.Necessaire.MQ.Bus.Commons.csproj" />
+  </Folder>
+  <Folder Name="/Buses/QdActions/">
+    <Project Path="Buses/QdActions/H.Necessaire.MQ.Bus.QdActions.Commons/H.Necessaire.MQ.Bus.QdActions.Commons.csproj" />
+  </Folder>
+  <Folder Name="/Docs/">
+    <File Path="../../README.md" />
+  </Folder>
+  <Folder Name="/Playground/">
+    <Project Path="Playground/H.Necessaire.MQ.Playground.AspNetPlay/H.Necessaire.MQ.Playground.AspNetPlay.csproj" />
+  </Folder>
+  <Folder Name="/Runtimes/">
+    <Project Path="Runtimes/H.Necessaire.MQ.Runtime.Azure.CosmosDb/H.Necessaire.MQ.Runtime.Azure.CosmosDb.csproj" />
+    <Project Path="Runtimes/H.Necessaire.MQ.Runtime.FileSystem/H.Necessaire.MQ.Runtime.FileSystem.csproj" />
+    <Project Path="Runtimes/H.Necessaire.MQ.Runtime.Google.FirestoreDB/H.Necessaire.MQ.Runtime.Google.FirestoreDB.csproj" />
+    <Project Path="Runtimes/H.Necessaire.MQ.Runtime.RavenDb/H.Necessaire.MQ.Runtime.RavenDb.csproj" />
+    <Project Path="Runtimes/H.Necessaire.MQ.Runtime.SqlServer/H.Necessaire.MQ.Runtime.SqlServer.csproj" />
+  </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="Tools/H.Necessaire.MQ.CLI/H.Necessaire.MQ.CLI.csproj" />
+    <Project Path="Tools/H.Necessaire.MQ.Tools.CodeAnalysis/H.Necessaire.MQ.Tools.CodeAnalysis.csproj" />
+    <Project Path="Tools/H.Necessaire.MQ.Tools.DataContracts/H.Necessaire.MQ.Tools.DataContracts.csproj" />
+    <Project Path="Tools/H.Necessaire.MQ.Tools.Reporting/H.Necessaire.MQ.Tools.Reporting.csproj" />
+  </Folder>
+  <Folder Name="/Work/">
+    <File Path="../../TODO.md" />
+  </Folder>
+  <Project Path="H.Necessaire.MQ.Abstractions/H.Necessaire.MQ.Abstractions.csproj" />
+  <Project Path="H.Necessaire.MQ.Core/H.Necessaire.MQ.Core.csproj" />
+  <Project Path="H.Necessaire.MQ/H.Necessaire.MQ.csproj" />
+</Solution>

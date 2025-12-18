@@ -1,8 +1,8 @@
 ﻿using Azure.Messaging.ServiceBus;
+using H.Necessaire.MQ.Bus.Commons;
 using H.Necessaire.MQ.Bus.QdActions.Commons;
 using H.Necessaire.Serialization;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +18,8 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
         ServiceBusProcessor serviceBusProcessor = null;
         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         ImALogger logger;
+        ImAResilienceRecoveryRegistry resilienceRecoveryRegistry;
+        bool isListening = false;
         public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
             base.ReferDependencies(dependencyProvider);
@@ -37,12 +39,15 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
 
             string connectionStringFromConfig = config?.Get("ConnectionString")?.ToString();
             connectionString = !connectionStringFromConfig.IsEmpty() ? connectionStringFromConfig : connectionString;
+
+            uint? maxConcurrentCallsFromConfig = config?.Get("MaxConcurrentCalls")?.ToString()?.ParseToUIntOrFallbackTo(null);
+            maxConcurrentMessageHandling = (maxConcurrentCallsFromConfig == null) ? maxConcurrentMessageHandling : (ushort)maxConcurrentCallsFromConfig.Value;
+
+            resilienceRecoveryRegistry = dependencyProvider.Get<ImAResilienceRecoveryRegistry>();
         }
 
         public override async Task Start(CancellationToken? cancellationToken = null)
         {
-            await Task.CompletedTask;
-
             if (connectionString.IsEmpty())
             {
                 await logger.LogError("Azure Service Bus connection string is missing. It should be configured @ <ConfigRoot>.QdActions.Azure.ServiceBus.ConnectionString");
@@ -54,25 +59,61 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
                 return;
             }
 
-            serviceBusClient = new ServiceBusClient(connectionString);
-            serviceBusProcessor = serviceBusClient.CreateProcessor(queueName);
-            serviceBusProcessor.ProcessMessageAsync += ServiceBusProcessor_ProcessMessageAsync;
-            serviceBusProcessor.ProcessErrorAsync += ServiceBusProcessor_ProcessErrorAsync;
+            int retryAttempt = 0;
+            await new Func<Task>(async () =>
+            {
 
-            StartListening();
+                serviceBusClient = new ServiceBusClient(connectionString);
+                serviceBusProcessor = serviceBusClient.CreateProcessor(queueName, new ServiceBusProcessorOptions { AutoCompleteMessages = false, MaxConcurrentCalls = maxConcurrentMessageHandling });
+                serviceBusProcessor.ProcessMessageAsync += ServiceBusProcessor_ProcessMessageAsync;
+                serviceBusProcessor.ProcessErrorAsync += ServiceBusProcessor_ProcessErrorAsync;
+
+                await StartListening();
+
+                isListening = true;
+
+            })
+            .TryOrFailWithGrace(
+                numberOfTimes: 2,
+                onFail: async ex =>
+                {
+                    await logger.LogError($"Error occurred while trying to connect to Azure Service Bus after {retryAttempt + 1} attempt(s). Reason: {ex.Message}", ex);
+                    await Stop(cancellationToken);
+                },
+                onRetry: async ex =>
+                {
+                    await logger.LogWarn($"Couldn't connect to Azure Service Bus, retrying (attempt {++retryAttempt})... Reason: {ex.Message}", ex);
+                    await Stop(cancellationToken);
+                },
+                millisecondsToSleepBetweenRetries: 1000
+            );
+
+            resilienceRecoveryRegistry.RegisterResilienceTask(RunResiliencyChecks);
         }
 
         public override async Task Stop(CancellationToken? cancellationToken = null)
         {
+            resilienceRecoveryRegistry.UnregisterResilienceTask(RunResiliencyChecks);
+
+            isListening = false;
+
             if (serviceBusClient is null)
                 return;
 
-            cancellationTokenSource.Cancel();
+            new Action(() =>
+            {
 
-            await serviceBusProcessor.StopProcessingAsync();
+                serviceBusProcessor.ProcessMessageAsync -= ServiceBusProcessor_ProcessMessageAsync;
+                serviceBusProcessor.ProcessErrorAsync -= ServiceBusProcessor_ProcessErrorAsync;
 
-            await serviceBusProcessor.DisposeAsync();
-            await serviceBusClient.DisposeAsync();
+            }).TryOrFailWithGrace();
+
+            new Action(cancellationTokenSource.Cancel).TryOrFailWithGrace();
+
+            await new Func<Task>(async () => await serviceBusProcessor.StopProcessingAsync()).TryOrFailWithGrace(onFail: ex => { });
+
+            await new Func<Task>(async () => await serviceBusProcessor.DisposeAsync()).TryOrFailWithGrace(onFail: ex => { });
+            await new Func<Task>(async () => await serviceBusClient.DisposeAsync()).TryOrFailWithGrace(onFail: ex => { });
         }
 
         public void Dispose()
@@ -84,9 +125,9 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
             }).TryOrFailWithGrace();
         }
 
-        private async void StartListening()
+        private async Task StartListening()
         {
-            await serviceBusProcessor.StartProcessingAsync();
+            await serviceBusProcessor.StartProcessingAsync(cancellationTokenSource.Token).ConfigureAwait(continueOnCapturedContext: false);
         }
 
         private async Task ServiceBusProcessor_ProcessMessageAsync(ProcessMessageEventArgs arg)
@@ -104,6 +145,21 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
         private async Task ServiceBusProcessor_ProcessErrorAsync(ProcessErrorEventArgs arg)
         {
             await logger.LogError(arg.Exception);
+        }
+
+        private async Task RunResiliencyChecks()
+        {
+            await logger.LogTrace($"Running Azure Service Bus Resiliency Checks");
+            TimeSpan duration = TimeSpan.Zero;
+            using (new TimeMeasurement(x => duration = x))
+            {
+                if (serviceBusClient != null && serviceBusProcessor != null && isListening)
+                    return;
+
+                await Stop();
+                await Start();
+            }
+            await logger.LogTrace($"DONE Running Azure Service Bus Resiliency Checks in {duration}");
         }
     }
 }

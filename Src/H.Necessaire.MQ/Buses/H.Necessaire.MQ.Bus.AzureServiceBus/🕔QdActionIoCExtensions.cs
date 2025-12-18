@@ -1,4 +1,5 @@
 ﻿using H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions;
+using H.Necessaire.MQ.Bus.Commons;
 
 namespace H.Necessaire.MQ.Bus.AzureServiceBus
 {
@@ -20,6 +21,8 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus
                 .GetAwaiter()
                 .GetResult()
                 ;
+
+            dependencyProvider.Get<ResilienceRecoveryDaemon>().Start();
 
             return dependencyProvider;
         }

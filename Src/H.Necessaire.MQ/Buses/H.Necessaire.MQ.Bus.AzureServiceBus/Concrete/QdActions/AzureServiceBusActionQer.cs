@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using H.Necessaire.MQ.Bus.QdActions.Commons;
 using H.Necessaire.Serialization;
 using System;
 using System.Threading;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
 {
-    internal class AzureServiceBusActionQer : ImAnActionQer, ImADependency, IDisposable
+    internal class AzureServiceBusActionQer : MessageBrokerActionQerBase, IDisposable
     {
         string connectionString = null;
         string queueName = "h-qd-action-queue";
@@ -14,8 +15,10 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
         ServiceBusSender serviceBusSender = null;
         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        public void ReferDependencies(ImADependencyProvider dependencyProvider)
+        public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
+            base.ReferDependencies(dependencyProvider);
+
             ConfigNode config
                 = dependencyProvider
                 .GetRuntimeConfig()
@@ -37,7 +40,7 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus.Concrete.QdActions
             serviceBusSender = serviceBusClient.CreateSender(queueOrTopicName: queueName);
         }
 
-        public async Task<OperationResult> Queue(QdAction action)
+        protected override async Task<OperationResult> QueueActionToMessageBroker(QdAction action)
         {
             if (serviceBusSender is null)
                 return OperationResult.Fail("Azure Service Bus config is missing. It should be configured @ <ConfigRoot>.QdActions.Azure.ServiceBus.ConnectionString and <ConfigRoot>.QdActions.Azure.ServiceBus.QueueName");

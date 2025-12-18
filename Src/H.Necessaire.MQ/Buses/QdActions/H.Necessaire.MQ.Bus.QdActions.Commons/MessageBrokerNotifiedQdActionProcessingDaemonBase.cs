@@ -7,11 +7,12 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
 {
     internal abstract class MessageBrokerNotifiedQdActionProcessingDaemonBase : ImADaemon, ImAQdActionQueueOnDemandRunner, ImADependency
     {
-        static readonly Lazy<string[]> lazyEnvironmentInfo = new Lazy<string[]>(GetEnvironmentInfo);
-        static string[] environmentInfo => lazyEnvironmentInfo.Value;
+        protected const ushort optimalNumberOfProcessingThreadsPerCpu = 8;
+        protected ushort maxConcurrentMessageHandling = (ushort)(optimalNumberOfProcessingThreadsPerCpu * Environment.ProcessorCount);
         ImALogger logger;
         ImAQdActionProcessor[] allKnownProcessors;
         ImAStorageService<Guid, QdActionResult> qdActionResultStorage;
+        ImAStorageService<Guid, QdAction> qdActionStorageService;
         ImAnActionQer actionQer;
         int maxProcessingAttempts = 3;
         public virtual void ReferDependencies(ImADependencyProvider dependencyProvider)
@@ -21,6 +22,7 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
 
             logger = dependencyProvider.GetLogger<MessageBrokerNotifiedQdActionProcessingDaemonBase>();
             qdActionResultStorage = dependencyProvider.Get<ImAStorageService<Guid, QdActionResult>>();
+            qdActionStorageService = dependencyProvider.Get<ImAStorageService<Guid, QdAction>>();
             actionQer = dependencyProvider.Get<ImAnActionQer>();
         }
 
@@ -37,7 +39,7 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
         {
             QdActionResult result = OperationResult.Fail("Not yet started").WithPayload(qdAction).ToQdActionResult();
 
-            qdAction.Status = QdActionStatus.Running;
+            await UpdateQdActionState(qdAction.And(q => q.Status = QdActionStatus.Running));
 
             await
                 new Func<Task>(async () =>
@@ -47,8 +49,11 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
                     {
                         QdActionResult processingResult = await RunEligibleProcessorForQdAction(qdAction);
 
-                        qdAction.RunCount++;
-                        qdAction.Status = processingResult.IsSuccessful ? QdActionStatus.Succeeded : QdActionStatus.Failed;
+                        await UpdateQdActionState(
+                            qdAction
+                                .And(q => q.RunCount++)
+                                .And(q => q.Status = processingResult.IsSuccessful ? QdActionStatus.Succeeded : QdActionStatus.Failed)
+                        );
 
                         if (qdActionResultStorage != null)
                         {
@@ -66,7 +71,7 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
                     }
                 );
 
-            qdAction.Status = result.IsSuccessful ? QdActionStatus.Succeeded : QdActionStatus.Failed;
+            await UpdateQdActionState(qdAction.And(q => q.Status = result.IsSuccessful ? QdActionStatus.Succeeded : QdActionStatus.Failed));
 
             return result;
         }
@@ -143,13 +148,27 @@ namespace H.Necessaire.MQ.Bus.QdActions.Commons
                 qdActionResult
                 ?.And(x =>
                 {
-                    x.Comments = x.Comments.Push(environmentInfo, checkDistinct: false);
+                    x.Comments = x.Comments.Push(Note.GetEnvironmentInfo().AppendProcessInfo().Select(p => p.ToString()).ToArray(), checkDistinct: false);
                 });
         }
 
-        private static string[] GetEnvironmentInfo()
+        private async Task UpdateQdActionState(QdAction action)
         {
-            return Note.GetEnvironmentInfo().AppendProcessInfo().Select(x => x.ToString()).ToArray();
+            if (qdActionStorageService is null)
+                return;
+
+            await
+                new Func<Task>(async () =>
+                {
+                    (await qdActionStorageService.Save(action)).ThrowOnFail();
+                })
+                .TryOrFailWithGrace(
+                    onFail: async ex =>
+                    {
+                        string reason = $"Error occurred while trying to Update QdAction State for {action}. Reason: {ex.Message}";
+                        await logger.LogError(reason, ex, action);
+                    }
+                );
         }
     }
 }

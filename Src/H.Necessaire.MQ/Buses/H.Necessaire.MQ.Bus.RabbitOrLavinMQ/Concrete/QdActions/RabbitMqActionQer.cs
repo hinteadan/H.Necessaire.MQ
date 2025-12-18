@@ -1,22 +1,28 @@
-﻿using H.Necessaire.Serialization;
+﻿using H.Necessaire.MQ.Bus.QdActions.Commons;
+using H.Necessaire.Serialization;
 using RabbitMQ.Client;
 using System;
+using System.Collections.Concurrent;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 {
-    internal class RabbitMqActionQer : ImAnActionQer, ImADependency
+    internal class RabbitMqActionQer : MessageBrokerActionQerBase, ImADependency
     {
         string queueName = "h-qd-action-queue";
         string routingKey = "h-qd-action-queue";
         ConnectionFactory rabbitMqConnectionFactory;
-        IConnection rabbitMqConnection;
-        IModel rabbitMqChannel;
         ImALogger logger;
+        readonly ConcurrentQueue<QdAction> qdActionsToPublish = new ConcurrentQueue<QdAction>();
+        Debouncer qdActionsToPublishDebouncer;
 
-        public void ReferDependencies(ImADependencyProvider dependencyProvider)
+        public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
+            base.ReferDependencies(dependencyProvider);
+
+            qdActionsToPublishDebouncer = qdActionsToPublishDebouncer ?? new Debouncer(PublishQdActionsToMessageBroker, TimeSpan.FromSeconds(.5));
+
             ConfigNode config
                 = dependencyProvider
                 .GetRuntimeConfig()
@@ -26,10 +32,10 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
 
             rabbitMqConnectionFactory = new ConnectionFactory
             {
-                HostName = config?.Get("HostName")?.ToString(),
+                HostName = config?.Get("HostName")?.ToString() ?? "",
                 VirtualHost = config?.Get("VirtualHost")?.ToString(),
-                UserName = config?.Get("UserName")?.ToString(),
-                Password = config?.Get("Password")?.ToString(),
+                UserName = config?.Get("UserName")?.ToString() ?? "",
+                Password = config?.Get("Password")?.ToString() ?? "",
             };
 
             string queueNameFromConfig = config?.Get("QueueName")?.ToString();
@@ -41,38 +47,19 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
             logger = dependencyProvider.GetLogger<RabbitMqActionQer>();
         }
 
-        public async Task<OperationResult> Queue(QdAction action)
+        protected override async Task<OperationResult> QueueActionToMessageBroker(QdAction action)
         {
             OperationResult result = OperationResult.Fail("Not yet started");
 
+            qdActionsToPublish.Enqueue(action);
+
             await
-                new Func<Task>(() =>
+                new Func<Task>(async () =>
                 {
 
-                    using (IConnection rabbitMqConenction = rabbitMqConnectionFactory.CreateConnection())
-                    {
-                        using (IModel rabbitMqChannel = rabbitMqConenction.CreateModel())
-                        {
-                            QueueDeclareOk queue = rabbitMqChannel.QueueDeclare(
-                                queue: queueName,
-                                durable: true,
-                                exclusive: false,
-                                autoDelete: false,
-                                arguments: null
-                            );
-
-                            rabbitMqChannel.BasicPublish(
-                                exchange: string.Empty,
-                                routingKey: routingKey,
-                                basicProperties: rabbitMqChannel.CreateBasicProperties().And(x => x.Persistent = true),
-                                body: Encoding.UTF8.GetBytes(action.ToJsonObject())
-                            );
-                        }
-                    }
+                    await qdActionsToPublishDebouncer.Invoke();
 
                     result = OperationResult.Win();
-
-                    return true.AsTask();
 
                 })
                 .TryOrFailWithGrace(onFail: async ex =>
@@ -82,6 +69,46 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
                 });
 
             return result;
+        }
+
+        private async Task PublishQdActionsToMessageBroker()
+        {
+            if (qdActionsToPublish.Count == 0)
+                return;
+
+            await new Func<Task>(async () =>
+            {
+                using (IConnection rabbitMqConnection = await rabbitMqConnectionFactory.CreateConnectionAsync())
+                {
+                    using (IChannel rabbitMqChannel = await rabbitMqConnection.CreateChannelAsync())
+                    {
+                        QueueDeclareOk queue = await rabbitMqChannel.QueueDeclareAsync(
+                            queue: queueName,
+                            durable: true,
+                            exclusive: false,
+                            autoDelete: false,
+                            arguments: null
+                        );
+
+                        var messageProperties = new BasicProperties { Persistent = true };
+
+                        while(qdActionsToPublish.TryDequeue(out QdAction action))
+                        {
+                            await rabbitMqChannel.BasicPublishAsync(
+                                exchange: string.Empty,
+                                routingKey: routingKey,
+                                basicProperties: messageProperties,
+                                mandatory: true,
+                                body: Encoding.UTF8.GetBytes(action.ToJsonObject())
+                            );
+                        }
+                    }
+                }
+            })
+            .TryOrFailWithGrace(onFail: async ex =>
+            {
+                await logger.LogError($"Error occurred while publishing QD Actions queue. Reason: {ex.Message}", ex);
+            });
         }
     }
 }

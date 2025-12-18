@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire.CLI" Version="2.37.3" />
+		<PackageReference Include="H.Necessaire.CLI" Version="3.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -18,6 +18,8 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Buses\H.Necessaire.MQ.Bus.AzureServiceBus\H.Necessaire.MQ.Bus.AzureServiceBus.csproj" />
 	  <ProjectReference Include="..\..\Buses\H.Necessaire.MQ.Bus.RabbitOrLavinMQ\H.Necessaire.MQ.Bus.RabbitOrLavinMQ.csproj" />
+	  <ProjectReference Include="..\H.Necessaire.MQ.Tools.CodeAnalysis\H.Necessaire.MQ.Tools.CodeAnalysis.csproj" />
+	  <ProjectReference Include="..\H.Necessaire.MQ.Tools.Reporting\H.Necessaire.MQ.Tools.Reporting.csproj" />
 	</ItemGroup>
 
 </Project>

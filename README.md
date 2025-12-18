@@ -241,6 +241,15 @@ The Actor and ReActor usage doesn't change at all, so zero change in the busines
 
 Some buses include improved implementations for H.Necessaire QD Actions, described below.
 
+### Wireup
+
+```csharp
+dependencyRegistry
+    .WithRabbitMqQdActions()
+    .StartRabbitMqQdActionsProcessor()
+```
+> Or equivalet _(e.g.: `.WithAzureServiceBusQdActions().StartAzureServiceBusQdActionsProcessor()`)_
+
 
 ### H.Necessaire.MQ.Bus.**RabbitOrLavinMQ**
 
@@ -252,6 +261,7 @@ Some buses include improved implementations for H.Necessaire QD Actions, describ
     - QdActions.RabbitMQ.**Password**
     - QdActions.RabbitMQ.**QueueName** - optional, defaults to `h-qd-action-queue`
     - QdActions.RabbitMQ.**RoutingKey** - optional, defaults to `h-qd-action-queue`
+    - QdActions.RabbitMQ.**PrefetchCount** - optional, defaults to `optimalNumberOfProcessingThreadsPerCpu(=8) * Environment.ProcessorCount`
 
 
 ### H.Necessaire.MQ.Bus.**AzureServiceBus**
@@ -260,3 +270,4 @@ Some buses include improved implementations for H.Necessaire QD Actions, describ
     - QdActions.**MaxProcessingAttempts** - optional, defaults to `3`
     - QdActions.Azure.ServiceBus.**ConnectionString**
     - QdActions.Azure.ServiceBus.**QueueName**
+    - QdActions.Azure.ServiceBus.**MaxConcurrentCalls** - optional, defaults to `optimalNumberOfProcessingThreadsPerCpu(=8) * Environment.ProcessorCount`

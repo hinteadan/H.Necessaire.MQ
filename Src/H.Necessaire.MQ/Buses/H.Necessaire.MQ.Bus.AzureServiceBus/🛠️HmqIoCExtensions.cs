@@ -1,4 +1,5 @@
-﻿using H.Necessaire.MQ.Core;
+﻿using H.Necessaire.MQ.Bus.Commons;
+using H.Necessaire.MQ.Core;
 
 namespace H.Necessaire.MQ.Bus.AzureServiceBus
 {
@@ -11,6 +12,10 @@ namespace H.Necessaire.MQ.Bus.AzureServiceBus
         }
 
         public static T StartHmqAzureServiceBusExternalListener<T>(this T dependencyProvider) where T : ImADependencyProvider
-            => dependencyProvider.StartHmqExternalListener("AzureServiceBus");
+        {
+            dependencyProvider.StartHmqExternalListener("AzureServiceBus");
+            dependencyProvider.Get<ResilienceRecoveryDaemon>().Start();
+            return dependencyProvider;
+        }
     }
 }

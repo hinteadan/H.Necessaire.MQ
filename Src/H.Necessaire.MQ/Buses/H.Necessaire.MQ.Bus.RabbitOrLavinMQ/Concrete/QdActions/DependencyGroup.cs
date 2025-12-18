@@ -5,6 +5,9 @@
         public void RegisterDependencies(ImADependencyRegistry dependencyRegistry)
         {
             dependencyRegistry
+
+                .Register<Commons.DependencyGroup>(() => new Commons.DependencyGroup())
+
                 .Register<ImAnActionQer>(() => new RabbitMqActionQer())
                 .Register<RabbitMqQdActionProcessingDaemon>(() => new RabbitMqQdActionProcessingDaemon())
                 .Register<ImAQdActionQueueOnDemandRunner>(() => dependencyRegistry.Get<RabbitMqQdActionProcessingDaemon>())

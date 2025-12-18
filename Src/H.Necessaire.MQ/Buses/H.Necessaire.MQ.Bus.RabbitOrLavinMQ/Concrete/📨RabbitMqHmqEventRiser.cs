@@ -27,27 +27,32 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete
                 UserName = config?.Get("UserName")?.ToString(),
                 Password = config?.Get("Password")?.ToString(),
             };
+
+            string routingKeyFromConfig = config?.Get("RoutingKey")?.ToString();
+            routingKey = !routingKeyFromConfig.IsEmpty() ? routingKeyFromConfig : routingKey;
+
+            string exchangeFromConfig = config?.Get("Exchange")?.ToString();
+            exchange = !exchangeFromConfig.IsEmpty() ? exchangeFromConfig : exchange;
         }
 
-        public Task<OperationResult<ImAnHmqReActor>[]> Raise(HmqEvent hmqEvent)
+        public async Task<OperationResult<ImAnHmqReActor>[]> Raise(HmqEvent hmqEvent)
         {
-            using (IConnection rabbitMqConenction = rabbitMqConnectionFactory.CreateConnection())
+            using (IConnection rabbitMqConenction = await rabbitMqConnectionFactory.CreateConnectionAsync())
             {
-                using (IModel rabbitMqChannel = rabbitMqConenction.CreateModel())
+                using (IChannel rabbitMqChannel = await rabbitMqConenction.CreateChannelAsync())
                 {
-                    rabbitMqChannel.ExchangeDeclare(exchange, ExchangeType.Direct);
+                    await rabbitMqChannel.ExchangeDeclareAsync(exchange, ExchangeType.Direct);
 
-                    rabbitMqChannel
-                        .BasicPublish(
+                    await rabbitMqChannel
+                        .BasicPublishAsync(
                             exchange: exchange,
                             routingKey: routingKey,
-                            basicProperties: null,
                             body: Encoding.UTF8.GetBytes(hmqEvent.ToJsonObject())
                         );
                 }
             }
 
-            return OperationResult.Win().WithPayload(RabbitMqReActor.Instance).AsArray().AsTask();
+            return OperationResult.Win().WithPayload(RabbitMqReActor.Instance).AsArray();
         }
     }
 }

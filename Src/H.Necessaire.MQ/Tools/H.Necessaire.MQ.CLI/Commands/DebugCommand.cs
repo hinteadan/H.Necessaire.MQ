@@ -1,4 +1,5 @@
-﻿using H.Necessaire.Runtime.CLI.Commands;
+﻿using H.Necessaire.CLI.Commands;
+using H.Necessaire.Runtime.ExternalCommandRunner;
 using System;
 using System.Threading.Tasks;
 
@@ -7,9 +8,11 @@ namespace H.Necessaire.MQ.CLI.Commands
     [Alias("dbg")]
     internal class DebugCommand : CommandBase
     {
+        const int numberOfMessagesToPublish = 50;
         ImAnActionQer actionQer;
         ImAStorageBrowserService<QdAction, QdActionFilter> queueBrowser;
         ImAQdActionQueueOnDemandRunner queueOnDemandRunner;
+        ExternalCommandRunner externalCommandRunner;
         public override void ReferDependencies(ImADependencyProvider dependencyProvider)
         {
             base.ReferDependencies(dependencyProvider);
@@ -17,25 +20,43 @@ namespace H.Necessaire.MQ.CLI.Commands
             actionQer = dependencyProvider.Get<ImAnActionQer>();
             queueBrowser = dependencyProvider.Get<ImAStorageBrowserService<QdAction, QdActionFilter>>();
             queueOnDemandRunner = dependencyProvider.Get<ImAQdActionQueueOnDemandRunner>();
+
+            externalCommandRunner = dependencyProvider.Get<ExternalCommandRunner>();
         }
 
         public override async Task<OperationResult> Run()
         {
+            OperationResult<ExternalCommandRunContext> result = await externalCommandRunner
+                .WithContext(new ExternalCommandRunContext
+                {
+                    IsOutputCaptured = true,
+                    IsUserInputExpected = true,
+                    UserInputProvider = () => new string[] {
+                        "ping google.com",
+                        "ping hintea.com",
+                        "exit",
+                    }.AsTask(),
+                })
+                .RunCmd()
+                ;
+
+            string output = result.Payload.OutputData.ToString();
+
+            return result;
+
             await Task.CompletedTask;
 
             Log($"Debugging");
             using (new TimeMeasurement(x => Log($"DONE Debugging in  {x}")))
             {
-                await Task.WhenAll([
-                    actionQer.Queue(QdAction.New("DevTest", "test1")),
-                    //actionQer.Queue(QdAction.New("DevTestX", "test2")),
-                    //actionQer.Queue(QdAction.New("DevTestX", "test3")),
-                    //actionQer.Queue(QdAction.New("DevTestX", "test4")),
-                    //actionQer.Queue(QdAction.New("DevTestX", "test5")),
-                ]);
+                for (int index = 0; index < numberOfMessagesToPublish; index++)
+                {
+                    await actionQer.Queue(QdAction.New("DevTest", $"Test {index + 1}"));
+                }
             }
 
-            await Task.Delay(3500);
+            Console.WriteLine("Press ENTER to exit");
+            Console.ReadLine();
 
             return OperationResult.Win();
         }
