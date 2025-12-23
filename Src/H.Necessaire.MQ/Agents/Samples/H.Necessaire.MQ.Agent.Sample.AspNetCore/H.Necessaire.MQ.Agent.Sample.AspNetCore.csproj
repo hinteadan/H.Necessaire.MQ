@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Buses\H.Necessaire.MQ.Bus.RabbitOrLavinMQ\H.Necessaire.MQ.Bus.RabbitOrLavinMQ.csproj" />
+    <ProjectReference Include="..\..\..\Runtimes\H.Necessaire.MQ.Runtime.RavenDb\H.Necessaire.MQ.Runtime.RavenDb.csproj" />
+    <ProjectReference Include="..\..\H.Necessaire.MQ.Agent.Host.AspNetCore\H.Necessaire.MQ.Agent.Host.AspNetCore.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Secrets\Embed\**\*.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="H.Necessaire.Runtime.RavenDB" Version="3.0.7" />
+	</ItemGroup>
+
+</Project>

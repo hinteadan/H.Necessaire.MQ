@@ -2,6 +2,7 @@
 
 namespace H.Necessaire.MQ.Abstractions
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "H's semantic naming")]
     public interface ImAnHmqEventReActionRegistry
     {
         Task<OperationResult> LogEventReAction(HmqEvent hmqEvent, params OperationResult<ImAnHmqActorIdentity>[] hmqReActorResults);

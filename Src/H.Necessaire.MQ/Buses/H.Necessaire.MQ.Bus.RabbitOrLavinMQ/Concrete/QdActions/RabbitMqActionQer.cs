@@ -30,7 +30,12 @@ namespace H.Necessaire.MQ.Bus.RabbitOrLavinMQ.Concrete.QdActions
                 ?.Get("RabbitMQ")
                 ;
 
-            rabbitMqConnectionFactory = new ConnectionFactory
+            string url = config?.Get("URL")?.ToString();
+
+            if (!url.IsEmpty())
+                rabbitMqConnectionFactory = new ConnectionFactory { Uri = new Uri(url), };
+
+            rabbitMqConnectionFactory = rabbitMqConnectionFactory ?? new ConnectionFactory
             {
                 HostName = config?.Get("HostName")?.ToString() ?? "",
                 VirtualHost = config?.Get("VirtualHost")?.ToString(),

@@ -1,4 +1,17 @@
 <Solution>
+  <Folder Name="/Agents/" />
+  <Folder Name="/Agents/Common/">
+    <Project Path="Agents/H.Necessaire.MQ.Agent.Abstractions/H.Necessaire.MQ.Agent.Abstractions.csproj" Id="afe5f79c-b5e1-4f37-9126-27d38920e3d6" />
+    <Project Path="Agents/H.Necessaire.MQ.Agent.Core/H.Necessaire.MQ.Agent.Core.csproj" Id="c6f2903c-6534-46b5-9083-8c874f0ba944" />
+  </Folder>
+  <Folder Name="/Agents/Hosts/">
+    <Project Path="Agents/H.Necessaire.MQ.Agent.Host.AspNetCore/H.Necessaire.MQ.Agent.Host.AspNetCore.csproj" Id="dfcd0e4e-c8e2-4d21-b713-b92ce459c981" />
+    <Project Path="Agents/H.Necessaire.MQ.Agent.Host.Console/H.Necessaire.MQ.Agent.Host.Console.csproj" Id="c0220605-8f55-4961-8d05-59d3d4042de7" />
+  </Folder>
+  <Folder Name="/Agents/Samples/">
+    <Project Path="Agents/Samples/H.Necessaire.MQ.Agent.Sample.AspNetCore/H.Necessaire.MQ.Agent.Sample.AspNetCore.csproj" Id="fc6933c4-190b-4400-87d3-9dbbd762cb1d" />
+    <Project Path="Agents/Samples/H.Necessaire.MQ.Agent.Sample.Console/H.Necessaire.MQ.Agent.Sample.Console.csproj" Id="e1dd877f-ce68-487f-859d-dc668743e49b" />
+  </Folder>
   <Folder Name="/Buses/">
     <Project Path="Buses/H.Necessaire.MQ.Bus.AzureServiceBus/H.Necessaire.MQ.Bus.AzureServiceBus.csproj" />
     <Project Path="Buses/H.Necessaire.MQ.Bus.FileSystem/H.Necessaire.MQ.Bus.FileSystem.csproj" />
@@ -13,6 +26,8 @@
     <Project Path="Buses/QdActions/H.Necessaire.MQ.Bus.QdActions.Commons/H.Necessaire.MQ.Bus.QdActions.Commons.csproj" />
   </Folder>
   <Folder Name="/Docs/">
+    <File Path="../../Docs/Agents.md" />
+    <File Path="../../Docs/Arch.md" />
     <File Path="../../README.md" />
   </Folder>
   <Folder Name="/Playground/">

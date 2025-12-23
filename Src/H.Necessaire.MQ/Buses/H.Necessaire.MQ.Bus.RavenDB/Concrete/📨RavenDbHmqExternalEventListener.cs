@@ -67,7 +67,7 @@ namespace H.Necessaire.MQ.Bus.RavenDB.Concrete
                 })
                 .TryOrFailWithGrace(onFail: async ex =>
                 {
-                    await logger.LogError($"Error occured while handling RavenDB service bus event for {e.ServiceBusMessageID}. Message: {ex.Message}", ex);
+                    await logger.LogError($"Error occurred while handling RavenDB service bus event for {e.ServiceBusMessageID}. Message: {ex.Message}", ex);
                 });
         }
     }

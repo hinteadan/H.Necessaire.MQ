@@ -73,8 +73,7 @@ namespace H.Necessaire.MQ
                 r.ID = i;
                 r.IdentityAttributes = idAttrs?.Where(x => !x.IsEmpty())?.ToArrayNullIfEmpty();
                 r.Handler = handler;
-                if (config != null)
-                    config(r);
+                config?.Invoke(r);
             }));
 
             return reActor;

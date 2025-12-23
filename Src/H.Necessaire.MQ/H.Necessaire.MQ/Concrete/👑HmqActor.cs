@@ -41,10 +41,12 @@ namespace H.Necessaire.MQ.Concrete
             return globalRaiseResult;
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         private Task HandleRaiseFailures(HmqEvent hmqEvent, ImAnHmqReActor[] imAnHmqReActors)
         {
             //TODO: Handle raise failures if necessary
             return Task.CompletedTask;
         }
+#pragma warning restore IDE0060 // Remove unused parameter
     }
 }

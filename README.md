@@ -180,10 +180,12 @@ The Actor and ReActor usage doesn't change at all, so zero change in the busines
 
         1. H.Necessaire.MQ.Bus.**RabbitOrLavinMQ**
 
+            - HMQ.RabbitMQ.**URL** - if this is provided the rest are ignored
             - HMQ.RabbitMQ.**HostName**
             - HMQ.RabbitMQ.**VirtualHost**
             - HMQ.RabbitMQ.**UserName**
             - HMQ.RabbitMQ.**Password**
+            ---
             - HMQ.RabbitMQ.**RoutingKey** - optional, defaults to `hmq`
             - HMQ.RabbitMQ.**Exchange** - optional, defaults to `hmq`
 
@@ -255,10 +257,12 @@ dependencyRegistry
 
  - Configs
     - QdActions.**MaxProcessingAttempts** - optional, defaults to `3`
+    - QdActions.RabbitMQ.**URL** - if this is provided, the rest are ignored
     - QdActions.RabbitMQ.**HostName**
     - QdActions.RabbitMQ.**VirtualHost**
     - QdActions.RabbitMQ.**UserName**
     - QdActions.RabbitMQ.**Password**
+    ---
     - QdActions.RabbitMQ.**QueueName** - optional, defaults to `h-qd-action-queue`
     - QdActions.RabbitMQ.**RoutingKey** - optional, defaults to `h-qd-action-queue`
     - QdActions.RabbitMQ.**PrefetchCount** - optional, defaults to `optimalNumberOfProcessingThreadsPerCpu(=8) * Environment.ProcessorCount`

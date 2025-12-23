@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="H.Necessaire.Runtime" Version="3.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\H.Necessaire.MQ\H.Necessaire.MQ.csproj" />
+    <ProjectReference Include="..\H.Necessaire.MQ.Agent.Abstractions\H.Necessaire.MQ.Agent.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

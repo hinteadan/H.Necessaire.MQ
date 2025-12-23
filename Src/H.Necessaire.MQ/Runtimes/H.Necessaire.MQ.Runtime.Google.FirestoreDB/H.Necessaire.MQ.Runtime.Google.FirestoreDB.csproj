@@ -5,10 +5,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire" Version="3.0.5" />
-		<PackageReference Include="H.Necessaire.Runtime" Version="3.0.5" />
-		<PackageReference Include="H.Necessaire.Runtime.Google.FirestoreDB" Version="3.0.5" />
-		<PackageReference Include="H.Necessaire.Serialization" Version="3.0.5" />
+		<PackageReference Include="H.Necessaire" Version="3.0.7" />
+		<PackageReference Include="H.Necessaire.Runtime" Version="3.0.7" />
+		<PackageReference Include="H.Necessaire.Runtime.Google.FirestoreDB" Version="3.0.7" />
+		<PackageReference Include="H.Necessaire.Serialization" Version="3.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>

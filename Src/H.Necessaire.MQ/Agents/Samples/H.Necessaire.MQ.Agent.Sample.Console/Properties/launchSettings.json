@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "CLI - start hmq agent": {
+      "commandName": "Project",
+      "commandLineArgs": "HmqAgent"
+    },
+    "CLI - debug": {
+      "commandName": "Project",
+      "commandLineArgs": "debug debug"
+    }
+  }
+}

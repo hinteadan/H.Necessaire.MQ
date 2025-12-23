@@ -5,9 +5,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire" Version="3.0.5" />
+		<PackageReference Include="H.Necessaire" Version="3.0.7" />
 		<PackageReference Include="H.Necessaire.Runtime.Integration.NetCore" Version="2.46.0" />
-		<PackageReference Include="H.Necessaire.Runtime.SqlServer" Version="3.0.5" />
+		<PackageReference Include="H.Necessaire.Runtime.SqlServer" Version="3.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>

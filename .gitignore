@@ -404,3 +404,6 @@ FodyWeavers.xsd
 **/ironmen*.json
 appsettings.Local.*.json
 .idea
+
+version.txt
+**/Secrets/**/*.*

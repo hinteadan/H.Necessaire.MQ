@@ -10,8 +10,8 @@ namespace H.Necessaire.MQ.Concrete
     [Alias("internal", "internal-event-riser")]
     internal class HmqEventInternalRiser : ImAnHmqEventRiser, ImADependency
     {
-        static readonly TimeSpan eventRetryMinIterval = TimeSpan.FromSeconds(5);
-        static readonly TimeSpan eventRetryMaxIterval = TimeSpan.FromMinutes(5);
+        static readonly TimeSpan eventRetryMinInterval = TimeSpan.FromSeconds(5);
+        static readonly TimeSpan eventRetryMaxInterval = TimeSpan.FromMinutes(5);
         static readonly TimeSpan eventRetryIncrement = TimeSpan.FromSeconds(5);
 
         ImAnHmqActorAndReActorBookkeeper actorAndReActorBookkeeper;
@@ -82,10 +82,10 @@ namespace H.Necessaire.MQ.Concrete
 
             int numberOfAttempts = reActorLogs.Count();
             TimeSpan retryCoolDown = TimeSpan.FromSeconds(numberOfAttempts * eventRetryIncrement.TotalSeconds);
-            if (retryCoolDown < eventRetryMinIterval)
-                retryCoolDown = eventRetryMinIterval;
-            if (retryCoolDown > eventRetryMaxIterval)
-                retryCoolDown = eventRetryMaxIterval;
+            if (retryCoolDown < eventRetryMinInterval)
+                retryCoolDown = eventRetryMinInterval;
+            if (retryCoolDown > eventRetryMaxInterval)
+                retryCoolDown = eventRetryMaxInterval;
             DateTime timestampToResumeRetry = latestLog.AsOf + retryCoolDown;
 
             bool canRetry = DateTime.UtcNow >= timestampToResumeRetry;
