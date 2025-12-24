@@ -6,8 +6,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
-		<PackageReference Include="H.Necessaire" Version="3.0.7" />
-		<PackageReference Include="H.Necessaire.Serialization" Version="3.0.7" />
+		<PackageReference Include="H.Necessaire" Version="3.0.8" />
+		<PackageReference Include="H.Necessaire.Serialization" Version="3.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>

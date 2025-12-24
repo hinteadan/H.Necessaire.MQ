@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>H.Necessaire.MQ.Bus.RabbitOrLavinMQ</id>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
     <title>H's Necessaire MQ RabbitMQ or LavinMQ (or any other AMQP) Messaging Bus</title>
     <projectUrl>https://h.necessaire.dev</projectUrl>
     <repository type="git" url="https://github.com/hinteadan/H.Necessaire.MQ.git" branch="master" />
@@ -17,11 +17,11 @@
     <copyright>Copyright © 2024. Hintea Dan Alexandru. All Rights Reserved.</copyright>
     <tags>hintea dan alexandru .net essentials utils extensions core utilities data execution operation operations debounce throttle unsafe code retry policy useful normalization task collections batch task array rad rapid application development framework pub sub mq messagging message queue</tags>
     <dependencies>
-      <dependency id="H.Necessaire" version="3.0.7" />
-      <dependency id="H.Necessaire.Serialization" version="3.0.7" />
+      <dependency id="H.Necessaire" version="3.0.8" />
+      <dependency id="H.Necessaire.Serialization" version="3.0.8" />
       <dependency id="RabbitMQ.Client" version="7.2.0" />
-      <dependency id="H.Necessaire.MQ.Abstractions" version="0.0.6" />
-      <dependency id="H.Necessaire.MQ.Core" version="0.0.6" />
+      <dependency id="H.Necessaire.MQ.Abstractions" version="0.0.7" />
+      <dependency id="H.Necessaire.MQ.Core" version="0.0.7" />
     </dependencies>
   </metadata>
   <files>

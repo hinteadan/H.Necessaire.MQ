@@ -71,8 +71,10 @@ namespace H.Necessaire.MQ.Agent.Core.Concrete
                 ?? "AnonymousMachine"
                 ;
 
+            string username = Environment.UserName.IfEmpty("AnonymousUser");
+
             return
-                $"HmqAgent~{Guid.NewGuid()}~{machineName}~AsOf~{DateTime.UtcNow.PrintTimeStampAsIdentifier()}"
+                $"HmqAgent~{Guid.NewGuid()}~{username}~{machineName}~AsOf~{DateTime.UtcNow.PrintTimeStampAsIdentifier()}"
                 ;
         }
     }
