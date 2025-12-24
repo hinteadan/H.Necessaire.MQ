@@ -65,10 +65,14 @@ namespace H.Necessaire.MQ.Agent.Core.Concrete
 
         static string GetAgentID()
         {
-            return
+            string machineName =
                 HSafe.Run(() => System.Net.Dns.GetHostName().NullIfEmpty()).Return().NullIfEmpty()
                 ?? HSafe.Run(() => Environment.MachineName).Return().NullIfEmpty()
-                ?? $"UnknownHmqAgentMachineID-{Guid.NewGuid()}-AsOf-{DateTime.UtcNow.PrintTimeStampAsIdentifier()}"
+                ?? "AnonymousMachine"
+                ;
+
+            return
+                $"HmqAgent~{Guid.NewGuid()}~{machineName}~AsOf~{DateTime.UtcNow.PrintTimeStampAsIdentifier()}"
                 ;
         }
     }
