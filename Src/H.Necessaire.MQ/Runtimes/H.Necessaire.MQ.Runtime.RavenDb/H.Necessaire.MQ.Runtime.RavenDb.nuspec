@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>H.Necessaire.MQ.Runtime.RavenDb</id>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <title>H's Necessaire MQ RavenDB Storage Runtime</title>
     <projectUrl>https://h.necessaire.dev</projectUrl>
     <repository type="git" url="https://github.com/hinteadan/H.Necessaire.MQ.git" branch="master" />
@@ -20,8 +20,8 @@
       <dependency id="H.Necessaire" version="3.0.7" />
       <dependency id="H.Necessaire.Runtime" version="3.0.7" />
       <dependency id="H.Necessaire.Runtime.RavenDB" version="3.0.7" />
-      <dependency id="H.Necessaire.MQ.Abstractions" version="0.0.5" />
-      <dependency id="H.Necessaire.MQ.Core" version="0.0.5" />
+      <dependency id="H.Necessaire.MQ.Abstractions" version="0.0.6" />
+      <dependency id="H.Necessaire.MQ.Core" version="0.0.6" />
     </dependencies>
   </metadata>
   <files>
