@@ -7,8 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire.CLI" Version="3.0.8" />
-		<PackageReference Include="H.Necessaire.Runtime.RavenDB" Version="3.0.8" />
+		<PackageReference Include="H.Necessaire.CLI" Version="3.0.9" />
+		<PackageReference Include="H.Necessaire.Runtime.RavenDB" Version="3.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>
