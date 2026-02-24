@@ -5,7 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire" Version="3.0.9" />
+		<PackageReference Include="H.Necessaire" Version="3.0.14" />
 	</ItemGroup>
 
 	<ItemGroup>
