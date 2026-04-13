@@ -5,9 +5,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire" Version="3.0.14" />
-		<PackageReference Include="H.Necessaire.Serialization" Version="3.0.14" />
-		<PackageReference Include="RabbitMQ.Client" Version="7.2.0" />
+		<PackageReference Include="H.Necessaire" Version="3.0.19" />
+		<PackageReference Include="H.Necessaire.Serialization" Version="3.0.19" />
+		<PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
 	</ItemGroup>
 
 	<ItemGroup>
