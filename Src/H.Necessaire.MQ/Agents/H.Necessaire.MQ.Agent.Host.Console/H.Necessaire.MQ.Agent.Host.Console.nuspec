@@ -18,7 +18,7 @@
     <tags>hintea dan alexandru .net essentials utils extensions core utilities data execution operation operations debounce throttle unsafe code retry policy useful normalization task collections batch task array rad rapid application development framework pub sub mq messagging message queue</tags>
     <dependencies>
       <dependency id="H.Necessaire.MQ.Agent.Abstractions" version="0.0.10" />
-      <dependency id="H.Necessaire.Runtime.CLI" version="3.4.7" />
+      <dependency id="H.Necessaire.Runtime.CLI" version="3.5.0" />
     </dependencies>
   </metadata>
   <files>

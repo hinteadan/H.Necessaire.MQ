@@ -5,7 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire" Version="3.4.7" />
+		<PackageReference Include="H.Necessaire" Version="3.5.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.6.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.6.0" />
