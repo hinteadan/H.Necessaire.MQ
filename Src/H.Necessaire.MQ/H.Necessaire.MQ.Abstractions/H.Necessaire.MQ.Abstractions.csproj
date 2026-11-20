@@ -4,14 +4,20 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<NuspecFile>H.Necessaire.MQ.Abstractions.nuspec</NuspecFile>
+		<NuspecBasePath>$(SolutionDir)H.Necessaire.MQ.Abstractions</NuspecBasePath>
+		<NuspecProperties>configuration=$(Configuration)</NuspecProperties>
+	</PropertyGroup>
+
 	<ItemGroup>
-		<PackageReference Include="H.Necessaire" Version="3.0.19" />
+		<PackageReference Include="H.Necessaire" Version="4.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="IconLogo.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="IconLogo.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

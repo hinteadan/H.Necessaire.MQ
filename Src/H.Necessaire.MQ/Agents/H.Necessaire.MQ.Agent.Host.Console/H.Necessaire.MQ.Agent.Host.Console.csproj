@@ -1,16 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net11.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<NuspecFile>H.Necessaire.MQ.Agent.Host.Console.nuspec</NuspecFile>
+		<NuspecBasePath>$(SolutionDir)Agents/H.Necessaire.MQ.Agent.Host.Console</NuspecBasePath>
+		<NuspecProperties>configuration=$(Configuration)</NuspecProperties>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="H.Necessaire.Runtime.CLI" Version="3.0.19" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="H.Necessaire.Runtime.CLI" Version="4.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\H.Necessaire.MQ.Agent.Core\H.Necessaire.MQ.Agent.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\H.Necessaire.MQ.Agent.Core\H.Necessaire.MQ.Agent.Core.csproj" />
+	</ItemGroup>
 
 </Project>

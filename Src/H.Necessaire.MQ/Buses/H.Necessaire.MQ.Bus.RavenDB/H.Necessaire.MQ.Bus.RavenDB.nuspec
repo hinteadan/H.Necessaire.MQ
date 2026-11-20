@@ -17,8 +17,8 @@
     <copyright>Copyright © 2024. Hintea Dan Alexandru. All Rights Reserved.</copyright>
     <tags>hintea dan alexandru .net essentials utils extensions core utilities data execution operation operations debounce throttle unsafe code retry policy useful normalization task collections batch task array rad rapid application development framework pub sub mq messagging message queue</tags>
     <dependencies>
-      <dependency id="H.Necessaire" version="3.0.19" />
-      <dependency id="H.Necessaire.RavenDB" version="3.0.19" />
+      <dependency id="H.Necessaire" version="4.0.0" />
+      <dependency id="H.Necessaire.RavenDB" version="4.0.0" />
       <dependency id="Microsoft.Bcl.AsyncInterfaces" version="8.0.0" />
       <dependency id="H.Necessaire.MQ.Abstractions" version="0.0.10" />
       <dependency id="H.Necessaire.MQ.Core" version="0.0.10" />
@@ -26,5 +26,6 @@
   </metadata>
   <files>
     <file src="IconLogo.png" target="images\" />
+    <file src="bin\$configuration$\netstandard2.0\H.Necessaire.MQ.Bus.RavenDB.dll" target="lib\netstandard2.0\" />
   </files>
 </package>

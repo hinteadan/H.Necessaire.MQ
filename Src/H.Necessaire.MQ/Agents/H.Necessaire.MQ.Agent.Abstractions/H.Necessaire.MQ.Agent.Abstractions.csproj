@@ -1,15 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="H.Necessaire" Version="3.0.19" />
-  </ItemGroup>
+	<PropertyGroup>
+		<NuspecFile>H.Necessaire.MQ.Agent.Abstractions.nuspec</NuspecFile>
+		<NuspecBasePath>$(SolutionDir)Agents/H.Necessaire.MQ.Agent.Abstractions</NuspecBasePath>
+		<NuspecProperties>configuration=$(Configuration)</NuspecProperties>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\H.Necessaire.MQ.Abstractions\H.Necessaire.MQ.Abstractions.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="H.Necessaire" Version="4.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\H.Necessaire.MQ.Abstractions\H.Necessaire.MQ.Abstractions.csproj" />
+	</ItemGroup>
 
 </Project>

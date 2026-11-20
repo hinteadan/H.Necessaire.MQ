@@ -4,10 +4,16 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<NuspecFile>H.Necessaire.MQ.Runtime.FileSystem.nuspec</NuspecFile>
+		<NuspecBasePath>$(SolutionDir)Runtimes/H.Necessaire.MQ.Runtime.FileSystem</NuspecBasePath>
+		<NuspecProperties>configuration=$(Configuration)</NuspecProperties>
+	</PropertyGroup>
+
 	<ItemGroup>
-	  <PackageReference Include="H.Necessaire" Version="3.0.19" />
-	  <PackageReference Include="H.Necessaire.Runtime" Version="3.0.19" />
-	  <PackageReference Include="H.Necessaire.Serialization" Version="3.0.19" />
+		<PackageReference Include="H.Necessaire" Version="4.0.0" />
+		<PackageReference Include="H.Necessaire.Runtime" Version="4.0.0" />
+		<PackageReference Include="H.Necessaire.Serialization" Version="4.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
